@@ -114,21 +114,25 @@ def print_hi(name):
 
 
 from the_importer import TheImporter
+from alcohol123 import Alcohol123
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
     # first_attempt()
     importer = TheImporter()
-    print("-------------------גורדונס---------------------")
-    importer.search_attempt('גורדונס')
-    print("-------------------טרי אוליבס---------------------")
-    importer.search_attempt('טרי אוליבס')
-    print("-------------------kalua---------------------")
-    importer.search_attempt('קלואה')
-    print("-------------------ג'יימסון---------------------")
-    importer.search_attempt("ג'יימסון")
-    importer.search_attempt("ג'יימסון סלקט רזרב")
-    print("-------------------ג'ק דניאלס---------------------")
-    importer.search_attempt("ג'ק דניאלס")
+    # print("-------------------גורדונס---------------------")
+    # importer.search_attempt('גורדונס')
+    # print("-------------------טרי אוליבס---------------------")
+    # importer.search_attempt('טרי אוליבס')
+    # print("-------------------kalua---------------------")
+    # importer.search_attempt('קלואה')
+    # print("-------------------ג'יימסון---------------------")
+    # importer.search_attempt("ג'יימסון")
+    # importer.search_attempt("ג'יימסון סלקט רזרב")
+    # print("-------------------ג'ק דניאלס---------------------")
+    # importer.search_attempt("ג'ק דניאלס")
+    alcohol123 = Alcohol123()
+    # alcohol123.first_attempt()
+    alcohol123.search_attempt("ג'ק דניאלס")
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
