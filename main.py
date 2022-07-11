@@ -113,13 +113,22 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 
+from the_importer import TheImporter
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
     # first_attempt()
+    importer = TheImporter()
     print("-------------------גורדונס---------------------")
-    search_attempt('גורדונס')
-    print("-------------------קלואה---------------------")
-    search_attempt('קלואה')
+    importer.search_attempt('גורדונס')
+    print("-------------------טרי אוליבס---------------------")
+    importer.search_attempt('טרי אוליבס')
+    print("-------------------kalua---------------------")
+    importer.search_attempt('קלואה')
+    print("-------------------ג'יימסון---------------------")
+    importer.search_attempt("ג'יימסון")
+    importer.search_attempt("ג'יימסון סלקט רזרב")
+    print("-------------------ג'ק דניאלס---------------------")
+    importer.search_attempt("ג'ק דניאלס")
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
