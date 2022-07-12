@@ -4,6 +4,23 @@ from bs4 import BeautifulSoup
 
 
 class Alcohol123:
+    search = {
+        "name": {"element": "div", "attrs": "prod-box__title"},
+        "price": {
+            "element": "div",
+            "attrs": "jet-woo-product-price",
+            "inner_search": {
+                "element": "span",
+                "attrs": "woocommerce-Price-amount",
+                "inner_search": {
+                    "element": "bdi"
+                }
+            }
+        },
+        "volume": {"element": "div", "attrs": "prod-box__volume"},
+        "available": {"element": "h1", "attrs": "catalog-title", "search_word": "מלאי"}
+    }
+
     def first_attempt(self):
         # url = "https://alcohol123.co.il/product/%d7%95%d7%95%d7%99%d7%a1%d7%a7%d7%99-%d7%91%d7%9c%d7%95%d7%95%d7%99%d7%a0%d7%99-14-%d7%a7%d7%90%d7%a8%d7%99%d7%91%d7%99%d7%90%d7%9f-%d7%a7%d7%90%d7%a1%d7%a7/"
         url = "https://alcohol123.co.il/product/%d7%95%d7%95%d7%99%d7%a1%d7%a7%d7%99-%d7%92%d7%9c%d7%a0%d7%9c%d7%99%d7%95%d7%95%d7%98-12-%d7%a9%d7%a0%d7%94-700-%d7%9e%d7%9c/"
@@ -64,7 +81,9 @@ class Alcohol123:
             name = result.find('h5', class_=re.compile("jet-woo-product-title"))
             print("Name: " + name.text)
 
-            prize = result.find('div', class_=re.compile("jet-woo-product-price")).find('span', class_=re.compile("woocommerce-Price-amount")).find("bdi")
+            # prize = result.find(self.search["price"]["element"], class_=re.compile(self.search["price"]["attrs"]))
+            prize = self.inner_find(result, self.search["price"])
+            # prize = result.find('div', class_=re.compile("jet-woo-product-price")).find('span', class_=re.compile("woocommerce-Price-amount")).find("bdi")
             print("Prize: " + prize.text)
 
             volume = result.find("div", class_=re.compile("jet-woo-product-tags")).find("a")
@@ -88,6 +107,20 @@ class Alcohol123:
         else:
             print("search")
             self.data_from_search_list(soup)
+
+    def inner_find(self, soup, dictionary):
+        search = soup.find(dictionary["element"], class_=re.compile(dictionary["attrs"]))
+        dict_iter = dictionary["inner_search"]
+
+        while True:
+            if "attrs" in dict_iter:
+                search = search.find(dict_iter["element"], class_=re.compile(dict_iter["attrs"]))
+            else:
+                search = search.find(dict_iter["element"])
+            if "inner_search" not in dict_iter:
+                break
+            dict_iter = dict_iter["inner_search"]
+        return search
 
     def is_product_page(self, soup, name):
         title = soup.find("title").text

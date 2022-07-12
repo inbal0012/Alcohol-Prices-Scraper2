@@ -13,7 +13,7 @@ class Drinks4u:
     }
     search = {
         "name": {"element": "div", "attrs": "prod-box__title"},
-        "price": {"element": "div", "attrs": "prod-box__price"}, #if parent aria-hidden="true" go to next sibling
+        "price": {"element": "div", "attrs": "prod-box__price"},
         "volume": {"element": "div", "attrs": "prod-box__volume"},
         "available": {"element": "h1", "attrs": "catalog-title", "search_word": "מלאי"}
     }
@@ -25,7 +25,7 @@ class Drinks4u:
         "element": "ol",
         "attrs": "breadcrumb",
         "search_word": "חיפוש",
-        "inner_search2": {
+        "inner_search": {
             "element": "li",
             "attrs": "active",
         }
@@ -130,11 +130,16 @@ class Drinks4u:
 
     def inner_find(self, soup, dictionary):
         search = soup.find(dictionary["element"], class_=re.compile(dictionary["attrs"]))
-        i = 2
-        while "inner_search"+str(i) in dictionary:
-            inner_search = "inner_search" + str(i)
-            search = soup.find(dictionary[inner_search]["element"], class_=re.compile(dictionary[inner_search]["attrs"]))
-            i += 1
+        dict_iter = dictionary["inner_search"]
+
+        while True:
+            if "attrs" in dict_iter:
+                search = search.find(dict_iter["element"], class_=re.compile(dict_iter["attrs"]))
+            else:
+                search = search.find(dict_iter["element"])
+            if "inner_search" not in dict_iter:
+                break
+            dict_iter = dict_iter["inner_search"]
         return search
 
     def is_product_page(self, soup, name):
@@ -145,7 +150,6 @@ class Drinks4u:
         #     search = breadcrumb.find(self.product_page_check[inner_search]["element"], class_=re.compile(self.product_page_check[inner_search]["attrs"]))
         #     i += 1
         search = self.inner_find(soup, self.product_page_check)
-        print(search)
 
         if not re.search(self.product_page_check["search_word"], search.text):
             print("product page")
