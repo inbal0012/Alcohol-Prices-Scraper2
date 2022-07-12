@@ -21,10 +21,14 @@ class Drinks4u:
         "element": "div",
         "attrs": "hp-prods__item"
     }
-    is_product_page = {
+    product_page_check = {
         "element": "ol",
         "attrs": "breadcrumb",
-        "search_word": "חיפוש"
+        "search_word": "חיפוש",
+        "inner_search2": {
+            "element": "li",
+            "attrs": "active",
+        }
     }
 
     def first_attempt(self):
@@ -124,12 +128,25 @@ class Drinks4u:
             print("search")
             self.data_from_search_list(soup)
 
+    def inner_find(self, soup, dictionary):
+        search = soup.find(dictionary["element"], class_=re.compile(dictionary["attrs"]))
+        i = 2
+        while "inner_search"+str(i) in dictionary:
+            inner_search = "inner_search" + str(i)
+            search = soup.find(dictionary[inner_search]["element"], class_=re.compile(dictionary[inner_search]["attrs"]))
+            i += 1
+        return search
+
     def is_product_page(self, soup, name):
-        title = soup.find("title").text
-        breadcrumb = soup.find("ol", class_=re.compile("breadcrumb"))
-        search = breadcrumb.find("li", class_=re.compile("active"))
+        # breadcrumb = soup.find(self.product_page_check["element"], class_=re.compile(self.product_page_check["attrs"]))
+        # i = 2
+        # while "inner_search"+str(i) in self.product_page_check:
+        #     inner_search = "inner_search" + str(i)
+        #     search = breadcrumb.find(self.product_page_check[inner_search]["element"], class_=re.compile(self.product_page_check[inner_search]["attrs"]))
+        #     i += 1
+        search = self.inner_find(soup, self.product_page_check)
         print(search)
 
-        if not re.search("חיפוש", search.text):
+        if not re.search(self.product_page_check["search_word"], search.text):
             print("product page")
             return True
