@@ -138,8 +138,8 @@ if __name__ == '__main__':
     # alcohol123.search_attempt("ג'ק דניאלס")
     drinks4u = Drinks4u()
     # drinks4u.first_attempt()
-    # drinks4u.search_attempt("מקאלן")
+    drinks4u.search_attempt("מקאלן")
     haturki = Haturki()
-    haturki.first_attempt()
+    # haturki.first_attempt()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

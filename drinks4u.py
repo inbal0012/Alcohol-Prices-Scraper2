@@ -4,8 +4,31 @@ from bs4 import BeautifulSoup
 
 
 class Drinks4u:
+    base_url = "https://www.drinks4u.co.il/"
+    page = {
+        "name": {"element": "h1", "attrs": "catalog-title"},
+        "price": {"element": "h1", "attrs": "catalog-title"},
+        "volume": {"element": "h1", "attrs": "catalog-title"},
+        "available": {"element": "h1", "attrs": "catalog-title"}
+    }
+    search = {
+        "name": {"element": "div", "attrs": "prod-box__title"},
+        "price": {"element": "div", "attrs": "prod-box__price"}, #if parent aria-hidden="true" go to next sibling
+        "volume": {"element": "div", "attrs": "prod-box__volume"},
+        "available": {"element": "h1", "attrs": "catalog-title", "search_word": "מלאי"}
+    }
+    results = {
+        "element": "div",
+        "attrs": "hp-prods__item"
+    }
+    is_product_page = {
+        "element": "ol",
+        "attrs": "breadcrumb",
+        "search_word": "חיפוש"
+    }
+
     def first_attempt(self):
-        url = "https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=6818"
+        url = self.base_url + "index.php?dir=site&page=catalog&op=item&cs=6818"
         # url = "https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=6902"    # out of stock
         # url = "https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7176"    # 500 ml
         r = requests.get(url)
@@ -62,17 +85,17 @@ class Drinks4u:
         # print(results)
         for result in results:
             # print(result)
-            name = result.find('div', class_=re.compile("prod-box__title"))
+            name = result.find(self.search["name"]["element"], class_=re.compile(self.search["name"]["attrs"]))
             print("Name: " + name.text.strip())
 
-            prize = result.find('div', class_=re.compile("prod-box__price"))
+            prize = result.find(self.search["price"]["element"], class_=re.compile(self.search["price"]["attrs"]))
             print("Prize: " + prize.text)
             prizeWords = prize.text.split()
             # print(prizeWords)
             # print(prizeWords[0])
             prizeWords[0] = prizeWords[0].replace(',', '')
 
-            volume = result.find("div", class_=re.compile("prod-box__volume"))
+            volume = result.find(self.search["volume"]["element"], class_=re.compile(self.search["volume"]["attrs"]))
             # print(volume)
             words = volume.text.split()
             # print(words)
@@ -81,7 +104,7 @@ class Drinks4u:
                 volume1 = round(float(prizeWords[0])/float(words[-1]))*100
                 print("volume:", volume1)
 
-            outOfStock = re.search("מלאי", name.text)
+            outOfStock = re.search(self.search["available"]["search_word"], name.text)
             # inStock = result.find('div', class_=re.compile("qib-container"))
             if outOfStock:
                 print("outOfStock")
@@ -89,7 +112,7 @@ class Drinks4u:
             print("")
 
     def search_attempt(self, name):
-        url = "https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=search&q=" + name
+        url = self.base_url + "/index.php?dir=site&page=catalog&op=search&q=" + name
         r = requests.get(url)
         soup = BeautifulSoup(r.content, "html.parser")
         # print(soup)
