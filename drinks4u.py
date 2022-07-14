@@ -34,6 +34,7 @@ class Drinks4u:
         }
     }
 
+    # Public funcs
     def first_attempt(self):
         url = self.base_url + "index.php?dir=site&page=catalog&op=item&cs=6818"
         # url = "https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=6902"    # out of stock
@@ -49,6 +50,20 @@ class Drinks4u:
 
         return self.data_from_page(soup)
 
+    def search_attempt(self, name):
+        url = self.base_url + "/index.php?dir=site&page=catalog&op=search&q=" + name
+        r = requests.get(url)
+        soup = BeautifulSoup(r.content, "html.parser")
+        # print(soup)
+
+        if self.is_product_page(soup, name):
+            print("in page")
+            return self.data_from_page(soup)
+        else:
+            print("search")
+            return self.data_from_search_list(soup)
+
+    # Private funcs
     def data_from_page(self, soup):
         name = soup.find('h1', class_=re.compile("catalog-title")).text.strip()
         print("name: " + name)
@@ -86,9 +101,6 @@ class Drinks4u:
 
         # print(f[1])
         # print(soup.find('span', 'aria-label'=re.compile("שם יצרן")))
-
-    def find(self, soup, dictionary):
-        return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
 
     def data_from_search_list(self, soup):
         results = soup.find_all('div', class_=re.compile("hp-prods__item"))
@@ -128,18 +140,18 @@ class Drinks4u:
                 "availability": availability
             }
 
-    def search_attempt(self, name):
-        url = self.base_url + "/index.php?dir=site&page=catalog&op=search&q=" + name
-        r = requests.get(url)
-        soup = BeautifulSoup(r.content, "html.parser")
-        # print(soup)
+    def is_product_page(self, soup, name):
+        # breadcrumb = soup.find(self.product_page_check["element"], class_=re.compile(self.product_page_check["attrs"]))
+        # i = 2
+        # while "inner_search"+str(i) in self.product_page_check:
+        #     inner_search = "inner_search" + str(i)
+        #     search = breadcrumb.find(self.product_page_check[inner_search]["element"], class_=re.compile(self.product_page_check[inner_search]["attrs"]))
+        #     i += 1
+        search = self.inner_find(soup, self.product_page_check)
 
-        if self.is_product_page(soup, name):
-            print("in page")
-            return self.data_from_page(soup)
-        else:
-            print("search")
-            return self.data_from_search_list(soup)
+        if not re.search(self.product_page_check["search_word"], search.text):
+            print("product page")
+            return True
 
     def inner_find(self, soup, dictionary):
         search = soup.find(dictionary["element"], class_=re.compile(dictionary["attrs"]))
@@ -155,15 +167,5 @@ class Drinks4u:
             dict_iter = dict_iter["inner_search"]
         return search
 
-    def is_product_page(self, soup, name):
-        # breadcrumb = soup.find(self.product_page_check["element"], class_=re.compile(self.product_page_check["attrs"]))
-        # i = 2
-        # while "inner_search"+str(i) in self.product_page_check:
-        #     inner_search = "inner_search" + str(i)
-        #     search = breadcrumb.find(self.product_page_check[inner_search]["element"], class_=re.compile(self.product_page_check[inner_search]["attrs"]))
-        #     i += 1
-        search = self.inner_find(soup, self.product_page_check)
-
-        if not re.search(self.product_page_check["search_word"], search.text):
-            print("product page")
-            return True
+    def find(self, soup, dictionary):
+        return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
