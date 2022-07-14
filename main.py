@@ -117,6 +117,7 @@ from the_importer import TheImporter
 from alcohol123 import Alcohol123
 from drinks4u import Drinks4u
 from haturki import Haturki
+from test_site import TestSite
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
@@ -139,8 +140,11 @@ if __name__ == '__main__':
     drinks4u = Drinks4u()
     # drinks4u.first_attempt()
     # print(drinks4u.search_attempt("מקאלן"))
-    print(drinks4u.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050"))
+    # print(drinks4u.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050"))
     haturki = Haturki()
     # haturki.first_attempt()
+    testSite = TestSite()
+    # testSite.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050")
+    testSite.search_attempt("מקאלן")
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/

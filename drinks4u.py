@@ -6,16 +6,36 @@ from bs4 import BeautifulSoup
 class Drinks4u:
     base_url = "https://www.drinks4u.co.il/"
     page = {
-        "name": {"element": "h1", "attrs": "catalog-title"},
-        "price": {"element": "h1", "attrs": "catalog-title"},
-        "volume": {"element": "h1", "attrs": "catalog-title"},
-        "available": {"element": "h1", "attrs": "catalog-title"}
+        "name": {"element": "h1", "attrs_prop": "class", "attrs": "catalog-title"},
+        "price": {"element": "div", "attrs_prop": "class", "attrs": "price",
+                  "inner_search": {
+                      "element": "span",
+                  }},
+        "volume": {"element": "div", "attrs_prop": "class", "attrs": "prod-summary",
+                   "inner_search": {
+                       "element": "li",
+                   }},
+        "available": {"element": "div", "attrs_prop": "class", "attrs": "product-box-button-quantity", }
+    }
+    page2 = {
+        "name": {"element": "h1", "attrs_prop": "class", "attrs": "catalog-title", "data": "text"},
+        "price": {"element": "div", "attrs_prop": "class", "attrs": "price", "data": {
+                      "element": "span", "data": "price"}},
+        "volume": {"element": "div", "attrs_prop": "class", "attrs": "prod-summary", "data": {
+                       "element": "li", "data": "text"}},
+        "available": {"element": "div", "attrs_prop": "class", "attrs": "product-box-button-quantity", "data": "exist"}
     }
     search = {
         "name":     {"element": "div", "attrs_prop": "class", "attrs": "prod-box__title"},
         "price":    {"element": "div", "attrs_prop": "class", "attrs": "prod-box__price"},
         "volume":   {"element": "div", "attrs_prop": "class", "attrs": "prod-box__volume"},
         "available": {"element": "h1",  "attrs_prop": "class", "attrs": "catalog-title", "search_word": "מלאי"}
+    }
+    search2 = {
+        "name": {"element": "div", "attrs_prop": "class", "attrs": "prod-box__title", "data": "text"},
+        "price": {"element": "div", "attrs_prop": "class", "attrs": "prod-box__price", "data": "price"},
+        "volume_per_100": {"element": "div", "attrs_prop": "class", "attrs": "prod-box__volume", "data": "text"},
+        "available": {"element": "h1", "attrs_prop": "class", "attrs": "catalog-title", "search_word": "מלאי", "data": "text"}
     }
     results = {
         "element": "div",
@@ -65,14 +85,25 @@ class Drinks4u:
 
     # Private funcs
     def data_from_page(self, soup):
-        name = soup.find('h1', class_=re.compile("catalog-title")).text.strip()
-        print("name: " + name)
 
-        price = soup.find('div', class_=re.compile("price")).find("span").text
-        print("price: " + price)
 
-        volume = soup.find('div', class_=re.compile("prod-summary")).find("li").text
-        print("volume: " + volume)
+        name = self.find_in_page(soup, self.page2["name"])
+        # self.find(soup, self.page["name"]).text.strip()
+        print("Name: " + name)
+
+        price = self.find_in_page(soup, self.page2["price"])
+        # self.find(soup, self.page["price"]).text.strip()
+        print("Price: " + price)
+
+        available = self.find_in_page(soup, self.page2["available"])
+        print(f'Available: {available}')
+
+        # volume = soup.find('div', class_=re.compile("prod-summary")).find("li").text
+
+        volume = self.inner_find(soup, self.page["volume"]).text
+        print(f'volume: {volume}')
+
+
 
         # print(soup.find('div', id=re.compile("quantityAndPurchaseButtonsWrapper")))
         available = soup.find('div', class_=re.compile("product-box-button-quantity"))
@@ -88,20 +119,6 @@ class Drinks4u:
             "availability": availability
         }
 
-        # cont = soup.find_all('section', class_=re.compile("elementor-section-full_width"))
-        # cont[0].
-        # print(cont)
-        #
-        # def h2fromcont(container):
-        #     container.find_all()
-        # h2 = map(h2fromcont, cont)
-        # print(soup.find('span'))
-        # print(soup.find_all('td', id=re.compile("rptFeatureTemplateFieldsBelowPic")))
-        # f = soup.find_all('td', id=re.compile("rptFeatureTemplateFieldsBelowPic"))
-
-        # print(f[1])
-        # print(soup.find('span', 'aria-label'=re.compile("שם יצרן")))
-
     def data_from_search_list(self, soup):
         results = soup.find_all('div', class_=re.compile("hp-prods__item"))
         return_value = []
@@ -111,22 +128,16 @@ class Drinks4u:
             name = self.find(result, self.search["name"]).text.strip()
             print("Name: " + name)
 
-            price = self.find(result, self.search["price"]).text
+            price_text = self.find(result, self.search["price"]).text
+            price = price_text.split()[0].replace(',', '')
             print("Price: " + price)
-            price_words = price.split()
-            # print(price_words)
-            # print(price_words[0])
-            price_words[0] = price_words[0].replace(',', '')
 
-            volume_per_100 = self.find(result, self.search["volume"])
-
-            # print(volume)
-            words = volume_per_100.text.split()
-            # print(words)
-            # print(words[-1])
+            volume_per_100 = self.find_in_page(result, self.search2["volume_per_100"])
+            words = volume_per_100.split()
+            
             volume = "NA"
             if re.match(r'^-?\d+(?:\.\d+)$', words[-1]) is not None:
-                volume = round(float(price_words[0])/float(words[-1]))*100
+                volume = round(float(price)/float(words[-1]))*100
                 print("volume:", volume)
 
             available = re.search(self.search["available"]["search_word"], name)
@@ -138,7 +149,7 @@ class Drinks4u:
             print("")
             return_value.append({
                 "name": name,
-                "price": price,
+                "price": price_text,
                 "volume": volume,
                 "availability": availability
             })
@@ -146,12 +157,6 @@ class Drinks4u:
         return return_value
 
     def is_product_page(self, soup, name):
-        # breadcrumb = soup.find(self.product_page_check["element"], class_=re.compile(self.product_page_check["attrs"]))
-        # i = 2
-        # while "inner_search"+str(i) in self.product_page_check:
-        #     inner_search = "inner_search" + str(i)
-        #     search = breadcrumb.find(self.product_page_check[inner_search]["element"], class_=re.compile(self.product_page_check[inner_search]["attrs"]))
-        #     i += 1
         search = self.inner_find(soup, self.product_page_check)
 
         if not re.search(self.product_page_check["search_word"], search.text):
@@ -159,18 +164,46 @@ class Drinks4u:
             return True
 
     def inner_find(self, soup, dictionary):
-        search = soup.find(dictionary["element"], class_=re.compile(dictionary["attrs"]))
-        dict_iter = dictionary["inner_search"]
+        # search = soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
+        search = soup # self.find(soup, dictionary)
+        dict_iter = dictionary # ["inner_search"]
 
         while True:
-            if "attrs" in dict_iter:
-                search = search.find(dict_iter["element"], class_=re.compile(dict_iter["attrs"]))
-            else:
-                search = search.find(dict_iter["element"])
+            search = self.find(search, dict_iter)
             if "inner_search" not in dict_iter:
                 break
             dict_iter = dict_iter["inner_search"]
         return search
 
     def find(self, soup, dictionary):
-        return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
+            if "attrs" in dictionary:
+                return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
+            else:
+                return soup.find(dictionary["element"])
+        # return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
+
+    def find2(self, soup, page):
+        ret = {}
+        for element in page:
+            value = self.inner_find(soup, page[element]).text.strip()
+            print(f'{element} : {value}')
+            ret[element] = value
+
+        return ret
+
+    def find_element(self, soup, dictionary):
+        if "attrs" in dictionary:
+            return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
+        else:
+            return soup.find(dictionary["element"])
+
+    def find_in_page(self, soup, data):
+        sub_soup = self.find_element(soup, data)
+        if not isinstance(data["data"], str):
+            return self.find_in_page(sub_soup, data["data"])
+        elif data["data"] == "text":
+            return sub_soup.text.strip()
+        elif data["data"] == "exist":
+            return sub_soup is not None
+        elif data["data"] == "price":
+            return sub_soup.text.split()[0].replace(',', '')
