@@ -12,21 +12,24 @@ class Drinks4u:
         "available": {"element": "h1", "attrs": "catalog-title"}
     }
     search = {
-        "name": {"element": "div", "attrs": "prod-box__title"},
-        "price": {"element": "div", "attrs": "prod-box__price"},
-        "volume": {"element": "div", "attrs": "prod-box__volume"},
-        "available": {"element": "h1", "attrs": "catalog-title", "search_word": "מלאי"}
+        "name":     {"element": "div", "attrs_prop": "class", "attrs": "prod-box__title"},
+        "price":    {"element": "div", "attrs_prop": "class", "attrs": "prod-box__price"},
+        "volume":   {"element": "div", "attrs_prop": "class", "attrs": "prod-box__volume"},
+        "available": {"element": "h1",  "attrs_prop": "class", "attrs": "catalog-title", "search_word": "מלאי"}
     }
     results = {
         "element": "div",
+        "attrs_prop": "class",
         "attrs": "hp-prods__item"
     }
     product_page_check = {
         "element": "ol",
         "attrs": "breadcrumb",
+        "attrs_prop": "class",
         "search_word": "חיפוש",
         "inner_search": {
             "element": "li",
+            "attrs_prop": "class",
             "attrs": "active",
         }
     }
@@ -84,22 +87,26 @@ class Drinks4u:
         # print(f[1])
         # print(soup.find('span', 'aria-label'=re.compile("שם יצרן")))
 
+    def find(self, soup, dictionary):
+        return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
+
     def data_from_search_list(self, soup):
         results = soup.find_all('div', class_=re.compile("hp-prods__item"))
         # print(results)
         for result in results:
             # print(result)
-            name = result.find(self.search["name"]["element"], class_=re.compile(self.search["name"]["attrs"]))
+            name = self.find(result, self.search["name"])
             print("Name: " + name.text.strip())
 
-            prize = result.find(self.search["price"]["element"], class_=re.compile(self.search["price"]["attrs"]))
+            prize = self.find(result, self.search["price"])
             print("Prize: " + prize.text)
             prizeWords = prize.text.split()
             # print(prizeWords)
             # print(prizeWords[0])
             prizeWords[0] = prizeWords[0].replace(',', '')
 
-            volume = result.find(self.search["volume"]["element"], class_=re.compile(self.search["volume"]["attrs"]))
+            volume = self.find(result, self.search["volume"])
+
             # print(volume)
             words = volume.text.split()
             # print(words)
