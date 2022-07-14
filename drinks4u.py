@@ -104,41 +104,46 @@ class Drinks4u:
 
     def data_from_search_list(self, soup):
         results = soup.find_all('div', class_=re.compile("hp-prods__item"))
+        return_value = []
         # print(results)
         for result in results:
             # print(result)
-            name = self.find(result, self.search["name"])
-            print("Name: " + name.text.strip())
+            name = self.find(result, self.search["name"]).text.strip()
+            print("Name: " + name)
 
-            price = self.find(result, self.search["price"])
-            print("Price: " + price.text)
-            price_words = price.text.split()
+            price = self.find(result, self.search["price"]).text
+            print("Price: " + price)
+            price_words = price.split()
             # print(price_words)
             # print(price_words[0])
             price_words[0] = price_words[0].replace(',', '')
 
-            volume = self.find(result, self.search["volume"])
+            volume_per_100 = self.find(result, self.search["volume"])
 
             # print(volume)
-            words = volume.text.split()
+            words = volume_per_100.text.split()
             # print(words)
             # print(words[-1])
+            volume = "NA"
             if re.match(r'^-?\d+(?:\.\d+)$', words[-1]) is not None:
-                volume1 = round(float(price_words[0])/float(words[-1]))*100
-                print("volume:", volume1)
+                volume = round(float(price_words[0])/float(words[-1]))*100
+                print("volume:", volume)
 
-            available = re.search(self.search["available"]["search_word"], name.text)
+            available = re.search(self.search["available"]["search_word"], name)
             availability = True
-            if not available:
+            if available:
                 print("outOfStock")
                 availability = False
 
-            return {
+            print("")
+            return_value.append({
                 "name": name,
                 "price": price,
                 "volume": volume,
                 "availability": availability
-            }
+            })
+
+        return return_value
 
     def is_product_page(self, soup, name):
         # breadcrumb = soup.find(self.product_page_check["element"], class_=re.compile(self.product_page_check["attrs"]))
