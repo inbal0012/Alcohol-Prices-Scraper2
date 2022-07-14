@@ -42,36 +42,36 @@ class Drinks4u:
         soup = BeautifulSoup(r.content, "html.parser")
 
         self.data_from_page(soup)
-        # name = soup.find('h1', class_=re.compile("product_title"))
-        # print("name: " + name.text)
-        #
-        # price = soup.find('p', class_=re.compile("price"))
-        # print("price: " + price.text)
-        #
-        # volume = soup.find('span', id=re.compile("lblItemVolumePer100ml"))
-        #
-        # print("volume: " + volume.text)
-        # # print(soup.find('span'))
-        # # print(soup.find_all('td', id=re.compile("rptFeatureTemplateFieldsBelowPic")))
-        # f = soup.find_all('td', id=re.compile("rptFeatureTemplateFieldsBelowPic"))
-        #
-        # print(f[1])
-        # print(soup.find('span', 'aria-label'=re.compile("שם יצרן")))
+
+    def specific_page(self, url):
+        r = requests.get(url)
+        soup = BeautifulSoup(r.content, "html.parser")
+
+        return self.data_from_page(soup)
 
     def data_from_page(self, soup):
-        name = soup.find('h1', class_=re.compile("catalog-title"))
-        print("name: " + name.text.strip())
+        name = soup.find('h1', class_=re.compile("catalog-title")).text.strip()
+        print("name: " + name)
 
-        price = soup.find('div', class_=re.compile("price")).find("span")
-        print("price: " + price.text)
+        price = soup.find('div', class_=re.compile("price")).find("span").text
+        print("price: " + price)
 
-        volume = soup.find('div', class_=re.compile("prod-summary")).find("li")
-        print("volume: " + volume.text)
+        volume = soup.find('div', class_=re.compile("prod-summary")).find("li").text
+        print("volume: " + volume)
 
         # print(soup.find('div', id=re.compile("quantityAndPurchaseButtonsWrapper")))
         available = soup.find('div', class_=re.compile("product-box-button-quantity"))
+        availability = True
         if not available:
             print("outOfStock")
+            availability = False
+
+        return {
+            "name": name,
+            "price": price,
+            "volume": volume,
+            "availability": availability
+        }
 
         # cont = soup.find_all('section', class_=re.compile("elementor-section-full_width"))
         # cont[0].
@@ -98,12 +98,12 @@ class Drinks4u:
             name = self.find(result, self.search["name"])
             print("Name: " + name.text.strip())
 
-            prize = self.find(result, self.search["price"])
-            print("Prize: " + prize.text)
-            prizeWords = prize.text.split()
-            # print(prizeWords)
-            # print(prizeWords[0])
-            prizeWords[0] = prizeWords[0].replace(',', '')
+            price = self.find(result, self.search["price"])
+            print("Price: " + price.text)
+            price_words = price.text.split()
+            # print(price_words)
+            # print(price_words[0])
+            price_words[0] = price_words[0].replace(',', '')
 
             volume = self.find(result, self.search["volume"])
 
@@ -112,15 +112,21 @@ class Drinks4u:
             # print(words)
             # print(words[-1])
             if re.match(r'^-?\d+(?:\.\d+)$', words[-1]) is not None:
-                volume1 = round(float(prizeWords[0])/float(words[-1]))*100
+                volume1 = round(float(price_words[0])/float(words[-1]))*100
                 print("volume:", volume1)
 
-            outOfStock = re.search(self.search["available"]["search_word"], name.text)
-            # inStock = result.find('div', class_=re.compile("qib-container"))
-            if outOfStock:
+            available = re.search(self.search["available"]["search_word"], name.text)
+            availability = True
+            if not available:
                 print("outOfStock")
+                availability = False
 
-            print("")
+            return {
+                "name": name,
+                "price": price,
+                "volume": volume,
+                "availability": availability
+            }
 
     def search_attempt(self, name):
         url = self.base_url + "/index.php?dir=site&page=catalog&op=search&q=" + name
@@ -130,10 +136,10 @@ class Drinks4u:
 
         if self.is_product_page(soup, name):
             print("in page")
-            self.data_from_page(soup)
+            return self.data_from_page(soup)
         else:
             print("search")
-            self.data_from_search_list(soup)
+            return self.data_from_search_list(soup)
 
     def inner_find(self, soup, dictionary):
         search = soup.find(dictionary["element"], class_=re.compile(dictionary["attrs"]))

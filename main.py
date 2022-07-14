@@ -138,7 +138,8 @@ if __name__ == '__main__':
     # alcohol123.search_attempt("ג'ק דניאלס")
     drinks4u = Drinks4u()
     # drinks4u.first_attempt()
-    drinks4u.search_attempt("מקאלן")
+    # print(drinks4u.search_attempt("מקאלן"))
+    print(drinks4u.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050"))
     haturki = Haturki()
     # haturki.first_attempt()
 
