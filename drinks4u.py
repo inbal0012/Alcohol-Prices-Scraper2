@@ -1,9 +1,10 @@
+from base_site import BaseSite
 import requests
 import re
 from bs4 import BeautifulSoup
 
 
-class Drinks4u:
+class Drinks4u(BaseSite):
     base_url = "https://www.drinks4u.co.il/"
     page = {
         "name": {"element": "h1", "attrs_prop": "class", "attrs": "catalog-title"},
@@ -47,163 +48,33 @@ class Drinks4u:
         "attrs": "breadcrumb",
         "attrs_prop": "class",
         "search_word": "חיפוש",
-        "inner_search": {
+        "data": {
             "element": "li",
             "attrs_prop": "class",
             "attrs": "active",
+            "data": "text"
         }
     }
+    search_string = "/index.php?dir=site&page=catalog&op=search&q="
 
-    # Public funcs
-    def first_attempt(self):
-        url = self.base_url + "index.php?dir=site&page=catalog&op=item&cs=6818"
-        # url = "https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=6902"    # out of stock
-        # url = "https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7176"    # 500 ml
-        r = requests.get(url)
-        soup = BeautifulSoup(r.content, "html.parser")
+    def __init__(self):
+        """Constructor for testSite"""
+        super().__init__(self.base_url, self.page2, self.search2, self.results, self.product_page_check, self.search_string)
 
-        self.data_from_page(soup)
+    def search_get_volume(self, soup, dictionary):
+        price = self.search_get_price(soup, self.search)
 
-    def specific_page(self, url):
-        r = requests.get(url)
-        soup = BeautifulSoup(r.content, "html.parser")
+        volume_per_100 = self.find_element(soup, self.search2["volume_per_100"])
+        words = volume_per_100.split()
 
-        return self.data_from_page(soup)
+        volume = "NA"
+        if re.match(r'^-?\d+(?:\.\d+)$', words[-1]) is not None:
+            volume = round(float(price) / float(words[-1])) * 100
+        return volume
 
-    def search_attempt(self, name):
-        url = self.base_url + "/index.php?dir=site&page=catalog&op=search&q=" + name
-        r = requests.get(url)
-        soup = BeautifulSoup(r.content, "html.parser")
-        # print(soup)
-
-        if self.is_product_page(soup, name):
-            print("in page")
-            return self.data_from_page(soup)
-        else:
-            print("search")
-            return self.data_from_search_list(soup)
-
-    # Private funcs
-    def data_from_page(self, soup):
-
-
-        name = self.find_in_page(soup, self.page2["name"])
-        # self.find(soup, self.page["name"]).text.strip()
-        print("Name: " + name)
-
-        price = self.find_in_page(soup, self.page2["price"])
-        # self.find(soup, self.page["price"]).text.strip()
-        print("Price: " + price)
-
-        available = self.find_in_page(soup, self.page2["available"])
-        print(f'Available: {available}')
-
-        # volume = soup.find('div', class_=re.compile("prod-summary")).find("li").text
-
-        volume = self.inner_find(soup, self.page["volume"]).text
-        print(f'volume: {volume}')
-
-
-
-        # print(soup.find('div', id=re.compile("quantityAndPurchaseButtonsWrapper")))
-        available = soup.find('div', class_=re.compile("product-box-button-quantity"))
+    def search_get_available(self, soup, dictionary):
+        available = re.search(self.search["available"]["search_word"], self.search_get_name(soup, dictionary))
         availability = True
-        if not available:
-            print("outOfStock")
+        if available:
             availability = False
-
-        return {
-            "name": name,
-            "price": price,
-            "volume": volume,
-            "availability": availability
-        }
-
-    def data_from_search_list(self, soup):
-        results = soup.find_all('div', class_=re.compile("hp-prods__item"))
-        return_value = []
-        # print(results)
-        for result in results:
-            # print(result)
-            name = self.find(result, self.search["name"]).text.strip()
-            print("Name: " + name)
-
-            price_text = self.find(result, self.search["price"]).text
-            price = price_text.split()[0].replace(',', '')
-            print("Price: " + price)
-
-            volume_per_100 = self.find_in_page(result, self.search2["volume_per_100"])
-            words = volume_per_100.split()
-            
-            volume = "NA"
-            if re.match(r'^-?\d+(?:\.\d+)$', words[-1]) is not None:
-                volume = round(float(price)/float(words[-1]))*100
-                print("volume:", volume)
-
-            available = re.search(self.search["available"]["search_word"], name)
-            availability = True
-            if available:
-                print("outOfStock")
-                availability = False
-
-            print("")
-            return_value.append({
-                "name": name,
-                "price": price_text,
-                "volume": volume,
-                "availability": availability
-            })
-
-        return return_value
-
-    def is_product_page(self, soup, name):
-        search = self.inner_find(soup, self.product_page_check)
-
-        if not re.search(self.product_page_check["search_word"], search.text):
-            print("product page")
-            return True
-
-    def inner_find(self, soup, dictionary):
-        # search = soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
-        search = soup # self.find(soup, dictionary)
-        dict_iter = dictionary # ["inner_search"]
-
-        while True:
-            search = self.find(search, dict_iter)
-            if "inner_search" not in dict_iter:
-                break
-            dict_iter = dict_iter["inner_search"]
-        return search
-
-    def find(self, soup, dictionary):
-            if "attrs" in dictionary:
-                return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
-            else:
-                return soup.find(dictionary["element"])
-        # return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
-
-    def find2(self, soup, page):
-        ret = {}
-        for element in page:
-            value = self.inner_find(soup, page[element]).text.strip()
-            print(f'{element} : {value}')
-            ret[element] = value
-
-        return ret
-
-    def find_element(self, soup, dictionary):
-        if "attrs" in dictionary:
-            return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
-        else:
-            return soup.find(dictionary["element"])
-
-    def find_in_page(self, soup, data):
-        sub_soup = self.find_element(soup, data)
-        if not isinstance(data["data"], str):
-            return self.find_in_page(sub_soup, data["data"])
-        elif data["data"] == "text":
-            return sub_soup.text.strip()
-        elif data["data"] == "exist":
-            return sub_soup is not None
-        elif data["data"] == "price":
-            return sub_soup.text.split()[0].replace(',', '')
+        return availability
