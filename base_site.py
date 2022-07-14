@@ -44,16 +44,16 @@ class BaseSite():
 
     # Private funcs
     def data_from_page(self, soup):
-        name = self.get_name(soup, self.page)
+        name = self.page_get_name(soup, self.page)
         print("Name: " + name)
 
-        price = self.get_price(soup, self.page)
+        price = self.page_get_price(soup, self.page)
         print("Price: " + price)
 
-        volume = self.get_volume(soup, self.page)
+        volume = self.page_get_volume(soup, self.page)
         print(f'volume: {volume}')
 
-        available = self.get_available(soup, self.page)
+        available = self.page_get_available(soup, self.page)
         if not available:
             print("outOfStock")
 
@@ -71,16 +71,16 @@ class BaseSite():
         # print(results)
         for result in results:
 
-            name = self.get_name(result, self.search)
+            name = self.search_get_name(result, self.search)
             print("Name: " + name)
 
-            price = self.get_price(result, self.search)
+            price = self.search_get_price(result, self.search)
             print("Price: " + price)
 
-            volume = self.get_volume(result, self.search)
+            volume = self.search_get_volume(result, self.search)
             print(f'volume: {volume}')
 
-            available = self.get_available(result, self.search)
+            available = self.search_get_available(result, self.search)
             if not available:
                 print("outOfStock")
 
@@ -120,14 +120,26 @@ class BaseSite():
         elif data["data"] == "search":
             pass
 
-    def get_name(self, soup, dictionary):
+    def page_get_name(self, soup, dictionary):
         return self.find_element(soup, dictionary["name"])
 
-    def get_price(self, soup, dictionary):
+    def page_get_price(self, soup, dictionary):
         return self.find_element(soup, dictionary["price"])
 
-    def get_volume(self, soup, dictionary):
+    def page_get_volume(self, soup, dictionary):
         return self.find_element(soup, dictionary["volume"])
 
-    def get_available(self, soup, dictionary):
+    def page_get_available(self, soup, dictionary):
+        return self.find_element(soup, dictionary["available"])
+
+    def search_get_name(self, soup, dictionary):
+        return self.find_element(soup, dictionary["name"])
+
+    def search_get_price(self, soup, dictionary):
+        return self.find_element(soup, dictionary["price"])
+
+    def search_get_volume(self, soup, dictionary):
+        return self.find_element(soup, dictionary["volume"])
+
+    def search_get_available(self, soup, dictionary):
         return self.find_element(soup, dictionary["available"])

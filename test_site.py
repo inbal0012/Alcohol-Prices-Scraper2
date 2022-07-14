@@ -61,8 +61,8 @@ class TestSite(BaseSite):
         """Constructor for testSite"""
         super().__init__(self.base_url, self.page2, self.search2, self.results, self.product_page_check, self.search_string)
 
-    def get_volume(self, soup, dictionary):
-        price = self.get_price(soup, self.search)
+    def search_get_volume(self, soup, dictionary):
+        price = self.search_get_price(soup, self.search)
 
         volume_per_100 = self.find_element(soup, self.search2["volume_per_100"])
         words = volume_per_100.split()
@@ -72,8 +72,8 @@ class TestSite(BaseSite):
             volume = round(float(price) / float(words[-1])) * 100
         return volume
 
-    def get_available(self, soup, dictionary):
-        available = re.search(self.search["available"]["search_word"], self.get_name(soup, dictionary))
+    def search_get_available(self, soup, dictionary):
+        available = re.search(self.search["available"]["search_word"], self.search_get_name(soup, dictionary))
         availability = True
         if available:
             availability = False
