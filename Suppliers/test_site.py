@@ -1,10 +1,10 @@
-from base_site import BaseSite
-import requests
 import re
-from bs4 import BeautifulSoup
+from Suppliers.base_site import BaseSite
 
 
-class Drinks4u(BaseSite):
+class TestSite(BaseSite):
+    """this is a class to test base class"""
+
     base_url = "https://www.drinks4u.co.il/"
     page = {
         "name": {"element": "h1", "attrs_prop": "class", "attrs": "catalog-title"},

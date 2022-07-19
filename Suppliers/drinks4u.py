@@ -1,10 +1,8 @@
+from Suppliers.base_site import BaseSite
 import re
-from base_site import BaseSite
 
 
-class TestSite(BaseSite):
-    """this is a class to test base class"""
-
+class Drinks4u(BaseSite):
     base_url = "https://www.drinks4u.co.il/"
     page = {
         "name": {"element": "h1", "attrs_prop": "class", "attrs": "catalog-title"},
