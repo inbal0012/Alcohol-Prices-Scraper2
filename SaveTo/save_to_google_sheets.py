@@ -1,8 +1,9 @@
 import gspread
-from base_save import BaseSave
+# from base_save import BaseSave
 
 
-class SaveToGoogleSheets(BaseSave):
+# class SaveToGoogleSheets(BaseSave):
+class SaveToGoogleSheets:
     """"""
 
     # TODO add sheet size check to next_available_row to avoid crashing in case of out od bound insert
@@ -22,6 +23,18 @@ class SaveToGoogleSheets(BaseSave):
             self.worksheet = self.sheet.worksheet(name)
         else:
             self.worksheet = self.sheet.add_worksheet(title=name, rows=100, cols=20)
+
+    def save_item(self, item):
+        if self.search_item(item):
+            print(f'updating {item["name"]}')
+            self.update_item(item)
+        else:
+            print(f'creating {item["name"]}')
+            self.save_new_item(item)
+
+    def save_items(self, items):
+        for item in items:
+            self.save_item(item)
 
     # private funcs
     def next_available_row(self):
@@ -64,9 +77,10 @@ class SaveToGoogleSheets(BaseSave):
         names = index.col_values(1)
 
         if name in names:
-            print("sheet exists")
+            print("worksheet exists")
             return True
         else:
+            print(f'create worksheet {name}')
             return False
 
     def get_letter_from_num(self, num):
