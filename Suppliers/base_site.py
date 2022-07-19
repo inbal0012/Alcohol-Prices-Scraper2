@@ -33,7 +33,7 @@ class BaseSite:
         return self.data_from_page(soup)
 
     def search_attempt(self, name):
-        url = self.base_url + self.search_string + name
+        url = self.build_search_url(name)
         r = requests.get(url)
         soup = BeautifulSoup(r.content, "html.parser")
 
@@ -93,10 +93,10 @@ class BaseSite:
     def data_from_search_list(self, soup):
 
         results = self.get_results(soup)
+        print(results)
         return_value = []
         # print(results)
         for result in results:
-
             name = self.search_get_name(result, self.search)
             print("Name: " + name)
 
@@ -179,4 +179,7 @@ class BaseSite:
         return self.saver is not None
 
     def page_select_sub_soup(self, soup):
-        return  soup
+        return soup
+
+    def build_search_url(self, name):
+        return self.base_url + self.search_string + name

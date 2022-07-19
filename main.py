@@ -27,8 +27,8 @@ if __name__ == '__main__':
     # importer.search_attempt("ג'יימסון")
     alcohol123 = Alcohol123()
     # alcohol123.first_attempt()
-    # items = alcohol123.search_attempt("וודקה")
-    item = alcohol123.specific_page("https://alcohol123.co.il/product/%d7%95%d7%95%d7%99%d7%a1%d7%a7%d7%99-%d7%92%d7%9c%d7%a0%d7%9c%d7%99%d7%95%d7%95%d7%98-12-%d7%a9%d7%a0%d7%94-700-%d7%9e%d7%9c/")
+    items = alcohol123.search_attempt("ג'ק דניאלס")
+    # item = alcohol123.specific_page("https://alcohol123.co.il/product/%d7%95%d7%95%d7%99%d7%a1%d7%a7%d7%99-%d7%92%d7%9c%d7%a0%d7%9c%d7%99%d7%95%d7%95%d7%98-12-%d7%a9%d7%a0%d7%94-700-%d7%9e%d7%9c/")
     # print(items)
     drinks4u = Drinks4u()
     # drinks4u.first_attempt()
@@ -48,7 +48,8 @@ if __name__ == '__main__':
     # google_sheet.save_item(item)
     # google_sheet.save_items(items)
     # google_sheet.is_worksheet_exist("Sheet9")
-    # alcohol123.set_saver(google_sheet, "Alcohol Prices")
+    alcohol123.set_saver(google_sheet, "Alcohol Prices")
+    alcohol123.save_items(items)
     # alcohol123.save_item(item)
 
 
