@@ -9,11 +9,12 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 
-from the_importer import TheImporter
-from alcohol123 import Alcohol123
-from drinks4u import Drinks4u
-from haturki import Haturki
-from test_site import TestSite
+from Suppliers.the_importer import TheImporter
+from Suppliers.alcohol123 import Alcohol123
+from Suppliers.drinks4u import Drinks4u
+from Suppliers.haturki import Haturki
+from Suppliers.base_site import BaseSite
+from Suppliers.test_site import TestSite
 from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
@@ -31,7 +32,7 @@ if __name__ == '__main__':
     drinks4u = Drinks4u()
     # drinks4u.first_attempt()
     # items = drinks4u.search_attempt("רום")
-    item = drinks4u.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050")
+    # item = drinks4u.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050")
     # print(item)
     haturki = Haturki()
     # haturki.first_attempt()
@@ -39,13 +40,16 @@ if __name__ == '__main__':
     # testSite.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050")
     # testSite.search_attempt("מקאלן")
 
-    # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
+    item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     google_sheet = SaveToGoogleSheets()
-    google_sheet.set_sheet("Alcohol Prices")
-    google_sheet.set_worksheet("drinks4u")
-    google_sheet.save_item(item)
+    # google_sheet.set_sheet("Alcohol Prices")
+    # google_sheet.set_worksheet("Drinks4u")
+    # google_sheet.save_item(item)
     # google_sheet.save_items(items)
     # google_sheet.is_worksheet_exist("Sheet9")
+    alcohol123.set_saver(google_sheet, "Alcohol Prices")
+    alcohol123.save_item(item)
+
 
 def for_nadav():
     search = []

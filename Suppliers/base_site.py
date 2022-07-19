@@ -1,9 +1,10 @@
 import requests
 import re
 from bs4 import BeautifulSoup
+from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 
 
-class BaseSite():
+class BaseSite:
     """some documentation"""
 
     def __init__(self, base_url, page, search, results, product_page_check, search_string):
@@ -14,6 +15,7 @@ class BaseSite():
         self.results = results
         self.product_page_check = product_page_check
         self.search_string = search_string
+        self.saver = None
 
     # Public funcs
     def first_attempt(self):
@@ -42,6 +44,26 @@ class BaseSite():
             print("search")
             return self.data_from_search_list(soup)
 
+    def set_saver(self, saver, sheet_name):
+        if type(saver) is SaveToGoogleSheets:
+            self.saver = saver
+            self.saver.set_sheet(sheet_name)
+            self.saver.set_worksheet(type(self).__name__)
+        else:
+            print("invalid saver")
+
+    def save_item(self, item):
+        if self.is_saver_defined:
+            self.saver.save_item(item)
+        else:
+            print("no saver defined")
+
+    def save_items(self, items):
+        if self.is_saver_defined:
+            self.saver.save_items(items)
+        else:
+            print("no saver defined")
+
     # Private funcs
     def data_from_page(self, soup):
         name = self.page_get_name(soup, self.page)
@@ -57,12 +79,14 @@ class BaseSite():
         if not available:
             print("outOfStock")
 
-        return {
+        return_value = {
             "name": name,
             "price": price,
             "volume": volume,
             "available": available
         }
+        self.save_item(return_value)
+        return return_value
 
     def data_from_search_list(self, soup):
 
@@ -92,6 +116,7 @@ class BaseSite():
                 "available": available
             })
 
+        self.save_items(return_value)
         return return_value
 
     def is_product_page(self, soup, name):
@@ -145,4 +170,8 @@ class BaseSite():
         return self.find_element(soup, dictionary["available"])
 
     def get_results(self, soup):
-        return soup.find_all(self.results["element"], attrs={self.results["attrs_prop"]: re.compile(self.results["attrs"])})
+        return soup.find_all(self.results["element"],
+                             attrs={self.results["attrs_prop"]: re.compile(self.results["attrs"])})
+
+    def is_saver_defined(self):
+        return self.saver is not None
