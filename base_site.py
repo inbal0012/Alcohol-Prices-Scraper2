@@ -66,7 +66,7 @@ class BaseSite():
 
     def data_from_search_list(self, soup):
 
-        results = soup.find_all(self.results["element"], attrs={self.results["attrs_prop"]: re.compile(self.results["attrs"])})
+        results = self.get_results(soup)
         return_value = []
         # print(results)
         for result in results:
@@ -143,3 +143,6 @@ class BaseSite():
 
     def search_get_available(self, soup, dictionary):
         return self.find_element(soup, dictionary["available"])
+
+    def get_results(self, soup):
+        return soup.find_all(self.results["element"], attrs={self.results["attrs_prop"]: re.compile(self.results["attrs"])})
