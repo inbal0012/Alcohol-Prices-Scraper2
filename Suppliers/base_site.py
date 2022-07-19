@@ -66,16 +66,18 @@ class BaseSite:
 
     # Private funcs
     def data_from_page(self, soup):
-        name = self.page_get_name(soup, self.page)
+        sub_soup = self.page_select_sub_soup(soup)
+
+        name = self.page_get_name(sub_soup, self.page)
         print("Name: " + name)
 
-        price = self.page_get_price(soup, self.page)
+        price = self.page_get_price(sub_soup, self.page)
         print("Price: " + price)
 
-        volume = self.page_get_volume(soup, self.page)
+        volume = self.page_get_volume(sub_soup, self.page)
         print(f'volume: {volume}')
 
-        available = self.page_get_available(soup, self.page)
+        available = self.page_get_available(sub_soup, self.page)
         if not available:
             print("outOfStock")
 
@@ -175,3 +177,6 @@ class BaseSite:
 
     def is_saver_defined(self):
         return self.saver is not None
+
+    def page_select_sub_soup(self, soup):
+        return  soup
