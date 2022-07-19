@@ -53,13 +53,13 @@ class BaseSite:
             print("invalid saver")
 
     def save_item(self, item):
-        if self.is_saver_defined:
+        if self.is_saver_defined():
             self.saver.save_item(item)
         else:
             print("no saver defined")
 
     def save_items(self, items):
-        if self.is_saver_defined:
+        if self.is_saver_defined():
             self.saver.save_items(items)
         else:
             print("no saver defined")
