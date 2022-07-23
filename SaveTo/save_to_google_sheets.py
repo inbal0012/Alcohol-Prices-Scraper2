@@ -25,9 +25,10 @@ class SaveToGoogleSheets:
             self.worksheet = self.sheet.add_worksheet(title=name, rows=100, cols=20)
 
     def save_item(self, item):
-        if self.search_item(item):
+        index = self.search_item(item["name"], item["volume"])
+        if index != -1:
             print(f'updating {item["name"]}')
-            self.update_item(item)
+            self.update_item(item, index)
         else:
             print(f'creating {item["name"]}')
             self.save_new_item(item)
@@ -42,21 +43,21 @@ class SaveToGoogleSheets:
         next_row = len(str_list) + 1
         return next_row
 
-    def search_item(self, item):
-        name = item['name']
-        items = self.worksheet.col_values(1)
-        if name in items:
-            print(f'{name} found')
-            return True
-        else:
-            print(f'{name} not found')
-            return False
+    def search_item(self, name, volume):
+        list_of_lists = self.worksheet.get_all_values()
+        print(f'find {name} vol {volume}')
+        for idx, dict in enumerate(list_of_lists):
+            if dict[0] == name and volume in dict[2]:
+                print(f'found in row {idx+1}')
+                return idx+1
+        print(f'{name} not pound')
+        return -1
 
-    def update_item(self, item):
-        cell = self.worksheet.find(item['name'])
-        print(self.get_letter_from_num(cell.col), cell.row)
-        start_at = f'{self.get_letter_from_num(cell.col)}{cell.row}'
-        end_at = f'D{cell.row}'
+    def update_item(self, item, row):
+        # cell = self.worksheet.find(item['name'])
+        # print(self.get_letter_from_num(cell.col), cell.row)
+        start_at = f'A{row}'
+        end_at = f'D{row}'
         self.worksheet.update(f'{start_at}:{end_at}',
                               [[item["name"], item["price"], item["volume"], item["available"]]])
         pass
