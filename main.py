@@ -13,7 +13,6 @@ from Suppliers.the_importer import TheImporter
 from Suppliers.alcohol123 import Alcohol123
 from Suppliers.drinks4u import Drinks4u
 from Suppliers.haturki import Haturki
-from Suppliers.base_site import BaseSite
 from Suppliers.test_site import TestSite
 from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 # Press the green button in the gutter to run the script.

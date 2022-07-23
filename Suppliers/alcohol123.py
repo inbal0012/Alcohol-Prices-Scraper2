@@ -1,7 +1,7 @@
 import requests
 import re
 from bs4 import BeautifulSoup
-from Suppliers.base_site import BaseSite
+from Generics.base_site import BaseSite
 
 
 class Alcohol123(BaseSite):

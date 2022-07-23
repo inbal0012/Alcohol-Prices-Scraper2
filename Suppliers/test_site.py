@@ -1,5 +1,5 @@
 import re
-from Suppliers.base_site import BaseSite
+from Generics.base_site import BaseSite
 
 
 class TestSite(BaseSite):

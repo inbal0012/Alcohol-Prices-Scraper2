@@ -183,3 +183,4 @@ class BaseSite:
 
     def build_search_url(self, name):
         return self.base_url + self.search_string + name
+
