@@ -137,15 +137,22 @@ class BaseSite:
     def find_element(self, soup, data):
         sub_soup = self._find(soup, data)
         if not isinstance(data["data"], str):
+            # Go deeper into the element
             return self.find_element(sub_soup, data["data"])
+        elif data["data"] == "exist":
+            # if data only needs to exist return value here
+            return sub_soup is not None
+        elif sub_soup is None:
+            # Data does not exists raise exception
+            return Exception("Data not found")
         elif data["data"] == "text":
             return sub_soup.text.strip()
-        elif data["data"] == "exist":
-            return sub_soup is not None
         elif data["data"] == "price":
             return sub_soup.text.split()[0].replace(',', '')
         elif data["data"] == "search":
             pass
+
+    # TODO change func names to get_X_from_Y
 
     def page_get_name(self, soup, dictionary):
         return self.find_element(soup, dictionary["name"])
