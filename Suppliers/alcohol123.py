@@ -78,3 +78,11 @@ class Alcohol123(BaseSite):
     def page_select_sub_soup(self, soup):
         details = soup.find(string="פרטי מוצר").find_parent("section", class_=re.compile("elementor-section"))
         return details.find_parent("div", re.compile("elementor-widget-wrap"))
+
+    def search_get_volume(self, soup, dictionary):
+        val = super().search_get_volume(soup, dictionary)
+        if isinstance(val, Exception):
+            print(f'123 search_get_price {val}')
+            # do it differently
+            return "N/A"
+        return val
