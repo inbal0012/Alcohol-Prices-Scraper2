@@ -36,10 +36,47 @@ class Alcohol123(BaseSite):
         "data": "text"
     }
     search_string = "&post_type=product&dgwt_wcas=1"
+    con_j = dict(
+        base_url="https://www.alcohol123.co.il/",
+        page={
+            "name": {"element": "h1", "attrs_prop": "class", "attrs": "catalog-title", "data": "text"},
+            "price": {"element": "div", "attrs_prop": "class", "attrs": "price", "data": {
+                "element": "span", "data": "price"}},
+            "volume": {"element": "div", "attrs_prop": "class", "attrs": "prod-summary", "data": {
+                "element": "li", "data": "text"}},
+            "available": {"element": "div", "attrs_prop": "class", "attrs": "product-box-button-quantity",
+                          "data": "exist"}
+        },
+        search={
+            "name": {"element": "h5", "attrs_prop": "class", "attrs": "jet-woo-product-title", "data": {
+                "element": "a", "data": "text"}},
+            "price": {"element": "div", "attrs_prop": "class", "attrs": "jet-woo-product-price",
+                      "data": {
+                          "element": "span", "attrs_prop": "class", "attrs": "woocommerce-Price-amount",
+                          "data": {
+                              "element": "bdi", "data": "price"}}},
+            "volume": {"element": "div", "attrs_prop": "class", "attrs": "jet-woo-product-tags", "data": "text"},
+            "available": {"element": "div", "attrs_prop": "class", "attrs": "qib-container", "search_word": "מלאי",
+                          "data": "exist"}
+        },
+        results={
+            "element": "div",
+            "attrs_prop": "class",
+            "attrs": "jet-woo-products__item"
+        },
+        product_page_check={
+            "element": "title",
+            "search_word": "You searched",
+            "data": "text"
+        },
+        search_string="&post_type=product&dgwt_wcas=1",
+        sheet_name="Alcohol Prices"
+    )
 
     def __init__(self):
         """Constructor for testSite"""
-        super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
+        # super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
+        super().from_config(self.con_j)
 
     def first_attempt(self):
         # url = "https://alcohol123.co.il/product/%d7%95%d7%95%d7%99%d7%a1%d7%a7%d7%99-%d7%92%d7%9c%d7%a0%d7%9c%d7%99%d7%95%d7%95%d7%98-12-%d7%a9%d7%a0%d7%94-700-%d7%9e%d7%9c/"
@@ -64,10 +101,8 @@ class Alcohol123(BaseSite):
         if not available:
             print("outOfStock")
 
-
     def build_search_url(self, name):
         value = self.base_url + "/?s=" + name + self.search_string
-        print(value)
         return value
 
     def page_get_volume(self, soup, dictionary):

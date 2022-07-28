@@ -17,6 +17,18 @@ class BaseSite:
         self.search_string = search_string
         self.saver = None
 
+    @classmethod
+    def from_config(self, config_json):
+        """Constructor for BaseSite"""
+        # TODO add KeyError check
+        self.base_url = config_json["base_url"]
+        self.page = config_json["page"]
+        self.search = config_json["search"]
+        self.results = config_json["results"]
+        self.product_page_check = config_json["product_page_check"]
+        self.search_string = config_json["search_string"]
+        self.create_saver(self, config_json["sheet_name"])
+
     # Public funcs
     def first_attempt(self):
         url = self.base_url + "to be added"
@@ -51,6 +63,10 @@ class BaseSite:
             self.saver.set_worksheet(type(self).__name__)
         else:
             print("invalid saver")
+
+    def create_saver(self, sheet_name):
+        saver = SaveToGoogleSheets()
+        self.set_saver(self, saver, sheet_name)
 
     def save_item(self, item):
         if self.is_saver_defined():
@@ -93,7 +109,6 @@ class BaseSite:
     def data_from_search_list(self, soup):
 
         results = self.get_results(soup)
-        print(results)
         return_value = []
         # print(results)
         for result in results:
