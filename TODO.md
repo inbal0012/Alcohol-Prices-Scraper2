@@ -5,6 +5,7 @@
 * Create a data structure for returned data
 * Learn to save the data to excel
 * Learn how to not be identified as a bot
+* main function that combines the product list with the suppliers list
 
 ---
 
