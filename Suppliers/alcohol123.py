@@ -119,6 +119,16 @@ class Alcohol123(BaseSite):
         val = super().search_get_volume(soup, dictionary)
         if isinstance(val, Exception):
             print(f'123 search_get_price {val}')
+            return self.parse_volume_from_name(soup)
             # do it differently
-            return "N/A"
         return val
+
+    def parse_volume_from_name(self, soup):
+        name = self.search_get_name(soup, self.search)
+        if 'מ”ל' in name:
+            name = name.split()
+            return f'{name[-2]}'
+            # print('וודקה פינלנדיה – 700 מ”ל')
+        elif 'ליטר' in name:
+            return 'ליטר'
+        return "N/A"
