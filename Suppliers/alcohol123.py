@@ -77,6 +77,7 @@ class Alcohol123(BaseSite):
         """Constructor for testSite"""
         # super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
         super().from_config(self.con_j)
+        super().create_saver(self.sheet_name)
 
     def first_attempt(self):
         # url = "https://alcohol123.co.il/product/%d7%95%d7%95%d7%99%d7%a1%d7%a7%d7%99-%d7%92%d7%9c%d7%a0%d7%9c%d7%99%d7%95%d7%95%d7%98-12-%d7%a9%d7%a0%d7%94-700-%d7%9e%d7%9c/"

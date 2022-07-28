@@ -27,7 +27,7 @@ class BaseSite:
         self.results = config_json["results"]
         self.product_page_check = config_json["product_page_check"]
         self.search_string = config_json["search_string"]
-        self.create_saver(self, config_json["sheet_name"])
+        self.sheet_name = config_json["sheet_name"]
 
     # Public funcs
     def first_attempt(self):
@@ -66,7 +66,7 @@ class BaseSite:
 
     def create_saver(self, sheet_name):
         saver = SaveToGoogleSheets()
-        self.set_saver(self, saver, sheet_name)
+        self.set_saver(saver, sheet_name)
 
     def save_item(self, item):
         if self.is_saver_defined():
