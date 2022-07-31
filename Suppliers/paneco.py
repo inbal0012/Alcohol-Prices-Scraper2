@@ -5,12 +5,16 @@ import re
 class Paneco(BaseSite):
     base_url = 'https://www.paneco.co.il/'
     page = {
-        "name": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": "text"},
-        "price": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
-            "element": "TODO", "data": "price"}},
-        "volume": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
-            "element": "TODO", "data": "text"}},
-        "available": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": "exist"}
+        "name": {"element": "h1", "attrs_prop": "class", "attrs": "page-title", "data": "text"},
+        "price": {"element": "div", "attrs_prop": "class", "attrs": "price-final_price", "data": {
+            "element": "span", "attrs_prop": "class", "attrs": "price", "data": "price"}},
+        "special price": {"element": "span", "attrs_prop": "class", "attrs": "special-price", "data": {
+            "element": "span", "attrs_prop": "class", "attrs": "price-wrapper", "data": {
+                "element": "span", "attrs_prop": "class", "attrs": "price", "data": "price"}}},
+        "volume": {"element": "span", "attrs_prop": "class", "attrs": "product-list-per-100", "data": {
+            "element": "span", "attrs_prop": "class", "attrs": "unit", "data": "text"}},
+        "available": {"element": "div", "attrs_prop": "class", "attrs": "stock unavailable", "search_word": "TODO",
+                      "data": "not_exist"}
     }
     search = {
         "name": {"element": "a", "attrs_prop": "class", "attrs": "product-item-link", "data": "text"},

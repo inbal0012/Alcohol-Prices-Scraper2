@@ -57,7 +57,8 @@ if __name__ == '__main__':
     # haturki.first_attempt()
     # haturki.search_attempt("ג'ק דניאלס")
     paneco = Paneco()
-    paneco.search_attempt("ג'ק דניאלס")
+    # paneco.search_attempt("ג'ק דניאלס")
+    paneco.specific_page("https://www.paneco.co.il/jack-daniels-tennessee-honey-12x1000ml-35-3")
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     google_sheet = SaveToGoogleSheets()
