@@ -111,7 +111,11 @@ class Alcohol123(BaseSite):
     def page_get_volume(self, soup, dictionary):
         bottle_volume = soup.find(string="נפח בקבוק").find_parent("div", class_=re.compile("elementor-column"))
         volume = bottle_volume.next_sibling.next_sibling
-        return volume.text.split()[0].replace(',', '')
+        val = self.get_text_safe(volume)
+        if val == "Data not found" or val == "":
+            return "Data not found"
+        else:
+            return volume.text.split()[0].replace(',', '')
 
     def page_select_sub_soup(self, soup):
         details = soup.find(string="פרטי מוצר").find_parent("section", class_=re.compile("elementor-section"))
@@ -119,7 +123,7 @@ class Alcohol123(BaseSite):
 
     def search_get_volume(self, soup, dictionary):
         val = super().search_get_volume(soup, dictionary)
-        if isinstance(val, Exception):
+        if val == "Data not found":
             print(f'123 search_get_price {val}')
             return self.parse_volume_from_name(soup)
             # do it differently
@@ -132,5 +136,5 @@ class Alcohol123(BaseSite):
             return f'{name[-2]}'
             # print('וודקה פינלנדיה – 700 מ”ל')
         elif 'ליטר' in name:
-            return 'ליטר'
+            return '1000'
         return "N/A"
