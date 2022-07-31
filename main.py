@@ -12,13 +12,14 @@ def print_hi(name):
 
 
 def search_my_list_in(supplier):
+    print(f'\nmuahahaha lets hack {type(supplier).__name__} site')
     sh = SaveToGoogleSheets()
     sh.set_sheet("מחירון ברבית")
     sh.set_worksheet("אלכוהול לחיפוש")
     alcohol_array = sh.worksheet.col_values(1)
     print(alcohol_array)
 
-    run_on(supplier, "ביטר")
+    # run_on(supplier, alcohol_array[79])
     # run_on(supplier, alcohol_array[16])
 
     # for alcohol in alcohol_array:
@@ -37,6 +38,7 @@ from Suppliers.the_importer import TheImporter
 from Suppliers.alcohol123 import Alcohol123
 from Suppliers.drinks4u import Drinks4u
 from Suppliers.haturki import Haturki
+from Suppliers.paneco import Paneco
 from Suppliers.test_site import TestSite
 from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 # Press the green button in the gutter to run the script.
@@ -54,6 +56,8 @@ if __name__ == '__main__':
     haturki = Haturki()
     # haturki.first_attempt()
     # haturki.search_attempt("ג'ק דניאלס")
+    paneco = Paneco()
+    paneco.search_attempt("ג'ק דניאלס")
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     google_sheet = SaveToGoogleSheets()
@@ -62,9 +66,9 @@ if __name__ == '__main__':
     # google_sheet.save_item(item)
     # google_sheet.save_items(items)
     # search_my_list_in(importer)
-    search_my_list_in(alcohol123)
-    search_my_list_in(drinks4u)
-    search_my_list_in(haturki)
+    # search_my_list_in(alcohol123)
+    # search_my_list_in(drinks4u)
+    # search_my_list_in(haturki)
     # alcohol123.search_attempt("פסואה")
     # haturki.search_attempt("M&H elements red wine")
 
