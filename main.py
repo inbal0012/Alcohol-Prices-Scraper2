@@ -2,11 +2,35 @@
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import time
+from Generics.base_site import BaseSite
 
 
 def print_hi(name):
     # Use a breakpoint in the code line below to debug your script.
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+
+
+def search_my_list_in(supplier):
+    sh = SaveToGoogleSheets()
+    sh.set_sheet("מחירון ברבית")
+    sh.set_worksheet("אלכוהול לחיפוש")
+    alcohol_array = sh.worksheet.col_values(1)
+    print(alcohol_array)
+
+    run_on(supplier, "ביטר")
+    # run_on(supplier, alcohol_array[16])
+
+    # for alcohol in alcohol_array:
+    #     if alcohol == "אלכוהול" or alcohol == "":
+    #         continue
+    #     run_on(supplier, alcohol)
+
+
+def run_on(supplier, name):
+    print(name)
+    supplier.search_attempt(name)
+    time.sleep(3)
 
 
 from Suppliers.the_importer import TheImporter
@@ -27,17 +51,23 @@ if __name__ == '__main__':
     drinks4u = Drinks4u()
     # items = drinks4u.search_attempt("ג'ק דניאלס")
     # item = drinks4u.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050")
+    haturki = Haturki()
+    # haturki.first_attempt()
+    # haturki.search_attempt("ג'ק דניאלס")
 
-    item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
+    # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     google_sheet = SaveToGoogleSheets()
     # google_sheet.set_sheet("Alcohol Prices")
     # google_sheet.set_worksheet("Drinks4u")
     # google_sheet.save_item(item)
     # google_sheet.save_items(items)
-    # google_sheet.is_worksheet_exist("Sheet9")
-    alcohol123.set_saver(google_sheet, "Alcohol Prices")
-    # alcohol123.save_items(items)
-    # alcohol123.save_item(item)
+    # search_my_list_in(importer)
+    search_my_list_in(alcohol123)
+    search_my_list_in(drinks4u)
+    search_my_list_in(haturki)
+    # alcohol123.search_attempt("פסואה")
+    # haturki.search_attempt("M&H elements red wine")
+
 
 
 def for_nadav():
