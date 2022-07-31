@@ -1,4 +1,6 @@
 import gspread
+import time
+
 # from base_save import BaseSave
 
 
@@ -6,7 +8,7 @@ import gspread
 class SaveToGoogleSheets:
     """"""
 
-    # TODO add sheet size check to next_available_row to avoid crashing in case of out od bound insert
+    # TODO add sheet size check to next_available_row to avoid crashing in case of out of bound insert
     def __init__(self):
         """Constructor for SaveToGoogleSheets"""
         self.worksheet = None
@@ -36,6 +38,7 @@ class SaveToGoogleSheets:
     def save_items(self, items):
         for item in items:
             self.save_item(item)
+            time.sleep(1.5)
 
     # private funcs
     def next_available_row(self):
@@ -47,7 +50,7 @@ class SaveToGoogleSheets:
         list_of_lists = self.worksheet.get_all_values()
         print(f'find {name} vol {volume}')
         for idx, dict in enumerate(list_of_lists):
-            if dict[0] == name and volume in dict[2]:
+            if dict[0] == name and str(volume) in dict[2]:
                 print(f'found in row {idx+1}')
                 return idx+1
         print(f'{name} not pound')
@@ -78,7 +81,7 @@ class SaveToGoogleSheets:
         names = index.col_values(1)
 
         if name in names:
-            print("worksheet exists")
+            print(f'{name} worksheet exists')
             return True
         else:
             print(f'create worksheet {name}')
