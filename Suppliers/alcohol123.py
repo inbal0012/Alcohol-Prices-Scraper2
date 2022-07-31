@@ -7,12 +7,12 @@ from Generics.base_site import BaseSite
 class Alcohol123(BaseSite):
     base_url = "https://www.alcohol123.co.il/"
     page = {
-        "name": {"element": "h1", "attrs_prop": "class", "attrs": "catalog-title", "data": "text"},
+        "name": {"element": "h1", "attrs_prop": "class", "attrs": "product_title", "data": "text"},
         "price": {"element": "div", "attrs_prop": "class", "attrs": "price", "data": {
                       "element": "span", "data": "price"}},
         "volume": {"element": "div", "attrs_prop": "class", "attrs": "prod-summary", "data": {
                        "element": "li", "data": "text"}},
-        "available": {"element": "div", "attrs_prop": "class", "attrs": "product-box-button-quantity", "data": "exist"}
+        "available": {"element": "div", "attrs_prop": "class", "attrs": "qib-container", "data": "exist"}
     }
     search = {
         "name": {"element": "h5", "attrs_prop": "class", "attrs": "jet-woo-product-title", "data": {
@@ -36,6 +36,8 @@ class Alcohol123(BaseSite):
         "data": "text"
     }
     search_string = "&post_type=product&dgwt_wcas=1"
+    sheet_name = "Alcohol Prices"
+
     con_j = dict(
         base_url="https://www.alcohol123.co.il/",
         page={
@@ -75,8 +77,8 @@ class Alcohol123(BaseSite):
 
     def __init__(self):
         """Constructor for testSite"""
-        # super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
-        super().from_config(self.con_j)
+        super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
+        # super().from_config(self.con_j)
         super().create_saver(self.sheet_name)
 
     def first_attempt(self):

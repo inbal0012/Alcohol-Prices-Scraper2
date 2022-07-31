@@ -54,10 +54,13 @@ class Drinks4u(BaseSite):
         }
     }
     search_string = "/index.php?dir=site&page=catalog&op=search&q="
+    sheet_name = "Alcohol Prices"
 
     def __init__(self):
         """Constructor for testSite"""
         super().__init__(self.base_url, self.page2, self.search2, self.results, self.product_page_check, self.search_string)
+        super().create_saver(self.sheet_name)
+
 
     def search_get_volume(self, soup, dictionary):
         price = self.search_get_price(soup, self.search)
