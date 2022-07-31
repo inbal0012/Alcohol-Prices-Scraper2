@@ -2,6 +2,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 from SaveTo.save_to_google_sheets import SaveToGoogleSheets
+import urllib.parse
 
 
 class BaseSite:
@@ -45,6 +46,7 @@ class BaseSite:
         return self.data_from_page(soup)
 
     def search_attempt(self, name):
+        name = urllib.parse.quote(name)
         url = self.build_search_url(name)
         r = requests.get(url)
         soup = BeautifulSoup(r.content, "html.parser")
