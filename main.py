@@ -15,7 +15,7 @@ def text_supplier(supplierClass):
     supplier = supplierClass()
     keep_testing = True
     while keep_testing:
-        print("what do you want to do?")
+        print("\n\nwhat do you want to do?")
         print("first_attempt enter f")
         print("""
 first_attempt   enter first
@@ -29,7 +29,7 @@ to exit         enter exit
         if choise in "first":
             supplier.first_attempt()
         elif choise in "search":
-            supplier.search_attempt("ג'ק דניאלס")
+            supplier.search_attempt("גלנליווט")
         elif choise in "page":
             url = input("enter URL: ")
             supplier.specific_page(url)
@@ -63,17 +63,20 @@ from Suppliers.alcohol123 import Alcohol123
 from Suppliers.drinks4u import Drinks4u
 from Suppliers.haturki import Haturki
 from Suppliers.paneco import Paneco
+from Suppliers.terminal3 import Terminal3
+from Suppliers.blend import Blend
 from Suppliers.test_site import TestSite
 from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     print_hi('PyCharm')
     # first_attempt()
-    text_supplier(Alcohol123)
-    text_supplier(Drinks4u)
-    text_supplier(Haturki)
-    text_supplier(Paneco)
-    text_supplier(TheImporter)
+    # text_supplier(Alcohol123)
+    # text_supplier(Drinks4u)
+    # text_supplier(Haturki)
+    # text_supplier(Paneco)
+    # text_supplier(TheImporter)
+    text_supplier(Blend)
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     # google_sheet = SaveToGoogleSheets()
