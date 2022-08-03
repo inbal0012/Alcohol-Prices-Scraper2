@@ -11,7 +11,7 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 
-def text_supplier(supplierClass):
+def test_supplier(supplierClass):
     supplier = supplierClass()
     keep_testing = True
     while keep_testing:
@@ -71,12 +71,12 @@ from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 if __name__ == '__main__':
     print_hi('PyCharm')
     # first_attempt()
-    # text_supplier(Alcohol123)
-    # text_supplier(Drinks4u)
-    # text_supplier(Haturki)
-    # text_supplier(Paneco)
-    # text_supplier(TheImporter)
-    text_supplier(Blend)
+    # test_supplier(Alcohol123)
+    # test_supplier(Drinks4u)
+    # test_supplier(Haturki)
+    # test_supplier(Paneco)
+    # test_supplier(TheImporter)
+    test_supplier(Blend)
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     # google_sheet = SaveToGoogleSheets()
