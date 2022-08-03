@@ -11,6 +11,30 @@ def print_hi(name):
     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
 
 
+def text_supplier(supplierClass):
+    supplier = supplierClass()
+    keep_testing = True
+    while keep_testing:
+        print("what do you want to do?")
+        print("first_attempt enter f")
+        print("""
+first_attempt   enter first
+search_attempt  enter search
+specific_page   enter page
+to exit         enter exit
+        """)
+        choise = input("please select: ")
+        if choise in "exit":
+            keep_testing = False
+        if choise in "first":
+            supplier.first_attempt()
+        elif choise in "search":
+            supplier.search_attempt("ג'ק דניאלס")
+        elif choise in "page":
+            url = input("enter URL: ")
+            supplier.specific_page(url)
+
+
 def search_my_list_in(supplier):
     print(f'\nmuahahaha lets hack {type(supplier).__name__} site')
     sh = SaveToGoogleSheets()
@@ -22,10 +46,10 @@ def search_my_list_in(supplier):
     # run_on(supplier, alcohol_array[79])
     # run_on(supplier, alcohol_array[16])
 
-    # for alcohol in alcohol_array:
-    #     if alcohol == "אלכוהול" or alcohol == "":
-    #         continue
-    #     run_on(supplier, alcohol)
+    for alcohol in alcohol_array:
+        if alcohol == "אלכוהול" or alcohol == "":
+            continue
+        run_on(supplier, alcohol)
 
 
 def run_on(supplier, name):
@@ -45,35 +69,24 @@ from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 if __name__ == '__main__':
     print_hi('PyCharm')
     # first_attempt()
-    # alcohol123 = Alcohol123()
-    # items = alcohol123.search_attempt("פינלנדיה")
-    # item = alcohol123.specific_page("https://alcohol123.co.il/product/%d7%95%d7%95%d7%99%d7%a1%d7%a7%d7%99-%d7%92%d7%9c%d7%a0%d7%9c%d7%99%d7%95%d7%95%d7%98-12-%d7%a9%d7%a0%d7%94-700-%d7%9e%d7%9c/")
-    # alcohol123.save_items(items)
-    # drinks4u = Drinks4u()
-    # items = drinks4u.search_attempt("ג'ק דניאלס")
-    # item = drinks4u.specific_page("https://www.drinks4u.co.il/index.php?dir=site&page=catalog&op=item&cs=7050")
-    # haturki = Haturki()
-    # haturki.first_attempt()
-    # haturki.search_attempt("ג'ק דניאלס")
-    # paneco = Paneco()
-    # paneco.search_attempt("ג'ק דניאלס")
-    # paneco.specific_page("https://www.paneco.co.il/jack-daniels-tennessee-honey-12x1000ml-35-3")
+    text_supplier(Alcohol123)
+    text_supplier(Drinks4u)
+    text_supplier(Haturki)
+    text_supplier(Paneco)
+    text_supplier(TheImporter)
 
-    theImporter = TheImporter()
-    theImporter.search_attempt("ג'ק דניאלס")
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
-    google_sheet = SaveToGoogleSheets()
+    # google_sheet = SaveToGoogleSheets()
     # google_sheet.set_sheet("Alcohol Prices")
     # google_sheet.set_worksheet("Drinks4u")
     # google_sheet.save_item(item)
     # google_sheet.save_items(items)
+
     # search_my_list_in(importer)
     # search_my_list_in(alcohol123)
     # search_my_list_in(drinks4u)
     # search_my_list_in(haturki)
     # search_my_list_in(paneco)
-    # alcohol123.search_attempt("פסואה")
-    # haturki.search_attempt("M&H elements red wine")
 
 
 
