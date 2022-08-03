@@ -168,6 +168,8 @@ class BaseSite:
             return sub_soup.text.strip()
         elif data["data"] == "price":
             return sub_soup.text.split()[0].replace(',', '')
+        elif data["element"]:
+            return sub_soup
         elif data["data"] == "search":
             pass
 
