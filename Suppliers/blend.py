@@ -7,10 +7,12 @@ class Blend(BaseSite):
     page = {
         "name": {"element": "h1", "attrs_prop": "class", "attrs": "product-name", "data": "text"},
         "price": {"element": "div", "attrs_prop": "class", "attrs": "logged-price list", "data": {
-            "element": "p", "attrs_prop": "class", "attrs": "total-price", "data": "price"}},
+            "element": "p", "attrs_prop": "class", "attrs": "total-price", "data": "text"}},
         "volume": {"element": "div", "attrs_prop": "class", "attrs": "value long-description", "data": {
             "element": "li", "data": "text"}},
-        "available": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": "exist"}
+        "available": {"element": "div", "attrs_prop": "class", "attrs": "product-label", "search_word": "אזל מהמלאי",
+                      "data": {
+                          "element": "p", "data": "text"}}
     }
     search = {
         "name": {"element": "div", "attrs_prop": "class", "attrs": "tile-body", "data": {
@@ -20,7 +22,7 @@ class Blend(BaseSite):
         "volume": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": "text"},
         "available": {"element": "div", "attrs_prop": "class", "attrs": "product-label", "search_word": "אזל מהמלאי",
                       "data": {
-                          "element": "p", "data": "text"}} 
+                          "element": "p", "data": "text"}}
     }
     results = {
         "element": "div", "attrs_prop": "class", "attrs": "tiles__item", "data":
@@ -47,6 +49,27 @@ class Blend(BaseSite):
         if search is None:
             print("product page")
             return True
+
+    def page_get_price(self, soup, dictionary):
+        val = super().page_get_price(soup, dictionary)
+        return val.split()[1].replace(',', '')
+
+    def page_get_volume(self, soup, dictionary):
+        val = super().page_get_volume(soup, dictionary)
+        vals = val.split()
+        if "נפח" in vals[0]:
+            return val.split()[1]
+        return "Data not found"
+
+    def page_get_available(self, soup, dictionary):
+        val = self.find_element(soup, dictionary["available"])
+        if val == "Data not found":
+            return True
+
+        search = re.search(dictionary["available"]["search_word"], val)
+        if search is not None:
+            return False
+        return True
 
     def search_get_price(self, soup, dictionary):
         val = super().search_get_price(soup, dictionary)
