@@ -87,6 +87,7 @@ class BaseSite:
         sub_soup = self.page_select_sub_soup(soup)
 
         name = self.page_get_name(sub_soup, self.page)
+        name = self.name_cleanup(name)
         print("Name: " + name)
 
         price = self.page_get_price(sub_soup, self.page)
@@ -184,7 +185,8 @@ class BaseSite:
         return self.find_element(soup, dictionary["name"])
 
     def page_get_price(self, soup, dictionary):
-        return self.find_element(soup, dictionary["price"])
+        res = self.find_element(soup, dictionary["price"])
+        return self.price_cleanup(res)
 
     def page_get_volume(self, soup, dictionary):
         return self.find_element(soup, dictionary["volume"])
@@ -196,7 +198,8 @@ class BaseSite:
         return self.find_element(soup, dictionary["name"])
 
     def search_get_price(self, soup, dictionary):
-        return self.find_element(soup, dictionary["price"])
+        res = self.find_element(soup, dictionary["price"])
+        return self.price_cleanup(res)
 
     def search_get_volume(self, soup, dictionary):
         return self.find_element(soup, dictionary["volume"])
@@ -216,4 +219,11 @@ class BaseSite:
 
     def build_search_url(self, name):
         return self.base_url + self.search_string + name
+
+    def name_cleanup(self, name):
+        return name
+
+    def price_cleanup(self, res):
+        return res.replace('₪', '')
+
 
