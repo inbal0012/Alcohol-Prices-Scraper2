@@ -65,12 +65,13 @@ class Drinks4u(BaseSite):
     def search_get_volume(self, soup, dictionary):
         price = self.search_get_price(soup, self.search)
 
-        volume_per_100 = self.find_element(soup, self.search2["volume_per_100"])
-        words = volume_per_100.split()
+        price_per_100_str = self.find_element(soup, self.search2["volume_per_100"])
+        words = price_per_100_str.split()
 
+        price_per_100ml = words[-1]
         volume = "NA"
-        if re.match(r'^-?\d+(?:\.\d+)$', words[-1]) is not None:
-            volume = round(float(price) / float(words[-1])) * 100
+        if re.match(r'^-?\d+(?:\.\d+)$', price_per_100ml) is not None:
+            volume = round(float(price) / float(price_per_100ml)) * 100
         return volume
 
     def search_get_available(self, soup, dictionary):
