@@ -29,7 +29,7 @@ class BaseSite:
         self.product_page_check = config_json["product_page_check"]
         self.search_string = config_json["search_string"]
         self.sheet_name = config_json["sheet_name"]
-
+    # TODO: remove מ"ל & ₪ sign from all sites. handle litters for all sites
     # Public funcs
     def first_attempt(self):
         url = self.base_url + "to be added"
@@ -219,6 +219,21 @@ class BaseSite:
 
     def build_search_url(self, name):
         return self.base_url + self.search_string + name
+
+    def get_volume_from_price_per_100ml(self, soup, dictionary):
+        price = self.search_get_price(soup, dictionary)
+
+        price_per_100_str = self.find_element(soup, dictionary["volume_per_100"])
+        words = price_per_100_str.split()
+
+        volume_per_100 = words[self.price_per_100ml_location()]
+        volume = "NA"
+        if re.match(r'^-?\d+(?:\.\d+)$', volume_per_100) is not None:
+            volume = round(float(price) / float(volume_per_100) * 100)
+        return volume
+
+    def price_per_100ml_location(self):
+        pass
 
     def name_cleanup(self, name):
         return name

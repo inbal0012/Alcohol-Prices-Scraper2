@@ -50,7 +50,6 @@ class TheImporter(BaseSite):
     def search_get_volume(self, soup, dictionary):
         vol = super().search_get_volume(soup, dictionary)
         par = vol.find_parent("span")
-        # bottle_volume = soup.find(string="נפח בקבוק").find_parent("div", class_=re.compile("elementor-column"))
         volume = par.next_sibling.next_sibling.next_sibling.text.split()
         if "ליטר" in volume:
                 return int(volume[0]) * 1000
