@@ -5,13 +5,12 @@ import re
 class WNF(BaseSite):    # Wine & Flavors
     base_url = 'https://wnf.co.il/'
     page = {
-        "name": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
-            "element": "TODO", "data": "text"}},
-        "price": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
-            "element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
-                "element": "TODO", "data": "price"}}},
-        "volume": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": "text"},
-        "available": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "search_word": "TODO", "data": "exist"}
+        "name": {"element": "h1", "attrs_prop": "class", "attrs": "page-title", "data": "text"},
+        "price": {"element": "span", "attrs_prop": "id", "attrs": "product-price", "data": {
+            "element": "span", "attrs_prop": "class", "attrs": "price", "data": "price"}},
+        "volume": {"element": "div", "attrs_prop": "class", "attrs": "al_details", "data": {
+            "element": "span", "data": "text"}},
+        "available": {"element": "div", "attrs_prop": "class", "attrs": "add-to-cart-block", "data": "exist"}
     }
     search = {
         "name": {"element": "div", "attrs_prop": "class", "attrs": "product-item-details top", "data": {
@@ -46,3 +45,6 @@ class WNF(BaseSite):    # Wine & Flavors
         words = val.split()
         volume = words[0].replace("ml", "")
         return volume
+
+    def page_select_sub_soup(self, soup):
+        return soup.find("div", class_=re.compile("product-top"))
