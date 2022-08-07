@@ -15,7 +15,8 @@ def test_supplier(supplierClass):
     supplier = supplierClass()
     keep_testing = True
     while keep_testing:
-        print("\n\nwhat do you want to do?")
+        print(f'\n\ntesting {type(supplier).__name__}')
+        print("what do you want to do?")
         print("first_attempt enter f")
         print("""
 first_attempt   enter first
@@ -29,7 +30,7 @@ to exit         enter exit
         if choise in "first":
             supplier.first_attempt()
         elif choise in "search":
-            supplier.search_attempt("גלנליווט")
+            supplier.search_attempt("טנקרי")
         elif choise in "page":
             url = input("enter URL: ")
             supplier.specific_page(url)
@@ -63,8 +64,9 @@ from Suppliers.alcohol123 import Alcohol123
 from Suppliers.drinks4u import Drinks4u
 from Suppliers.haturki import Haturki
 from Suppliers.paneco import Paneco
-from Suppliers.terminal3 import Terminal3
 from Suppliers.blend import Blend
+from Suppliers.terminal3 import Terminal3
+from Suppliers.wine_direct import WineDirect
 from Suppliers.test_site import TestSite
 from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 # Press the green button in the gutter to run the script.
@@ -76,7 +78,8 @@ if __name__ == '__main__':
     # test_supplier(Haturki)
     # test_supplier(Paneco)
     # test_supplier(TheImporter)
-    test_supplier(Blend)
+    # test_supplier(Blend)
+    test_supplier(WineDirect)
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     # google_sheet = SaveToGoogleSheets()
