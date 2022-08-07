@@ -67,6 +67,7 @@ from Suppliers.paneco import Paneco
 from Suppliers.blend import Blend
 from Suppliers.terminal3 import Terminal3
 from Suppliers.wine_direct import WineDirect
+from Suppliers.wnf import WNF
 from Suppliers.test_site import TestSite
 from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 # Press the green button in the gutter to run the script.
@@ -79,7 +80,8 @@ if __name__ == '__main__':
     # test_supplier(Paneco)
     # test_supplier(TheImporter)
     # test_supplier(Blend)
-    test_supplier(WineDirect)
+    # test_supplier(WineDirect)
+    test_supplier(WNF)
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     # google_sheet = SaveToGoogleSheets()
