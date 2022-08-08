@@ -88,10 +88,10 @@ class BaseSite:
 
         name = self.page_get_name(sub_soup, self.page)
         name = self.name_cleanup(name)
-        print("Name: " + name)
+        print(f'Name: {name}')
 
         price = self.page_get_price(sub_soup, self.page)
-        print("Price: " + price)
+        print(f'Price: {price}')
 
         volume = self.page_get_volume(sub_soup, self.page)
         print(f'volume: {volume}')
