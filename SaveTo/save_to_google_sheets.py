@@ -13,6 +13,7 @@ class SaveToGoogleSheets:
         """Constructor for SaveToGoogleSheets"""
         self.worksheet = None
         self.sheet = None
+        self.supplier_col = None
 
     # public funcs
     def set_sheet(self, name):
@@ -24,7 +25,7 @@ class SaveToGoogleSheets:
         if self.is_worksheet_exist(name):
             self.worksheet = self.sheet.worksheet(name)
         else:
-            self.worksheet = self.sheet.add_worksheet(title=name, rows=100, cols=20)
+            self.worksheet = self.sheet.add_worksheet(title=name, rows=1500, cols=20)
 
     def save_item(self, item):
         index = self.search_item(item["name"], item["volume"])
@@ -49,8 +50,8 @@ class SaveToGoogleSheets:
     def search_item(self, name, volume):
         list_of_lists = self.worksheet.get_all_values()
         print(f'find {name} vol {volume}')
-        for idx, dict in enumerate(list_of_lists):
-            if dict[0] == name and str(volume) in dict[2]:
+        for idx, array in enumerate(list_of_lists):
+            if array[2] == name and str(volume) in array[4]:
                 print(f'found in row {idx+1}')
                 return idx+1
         print(f'{name} not pound')
@@ -59,19 +60,20 @@ class SaveToGoogleSheets:
     def update_item(self, item, row):
         # cell = self.worksheet.find(item['name'])
         # print(self.get_letter_from_num(cell.col), cell.row)
-        start_at = f'A{row}'
-        end_at = f'D{row}'
+        start_at = f'C{row}'
+        end_at = f'F{row}'
         self.worksheet.update(f'{start_at}:{end_at}',
-                              [[item["name"], item["price"], item["volume"], item["available"]]])
-        pass
+                              [[item["name"], item["price"], item["volume"], item["available"]]], raw=False)
 
     def save_new_item(self, item):
         print("save_new_item")
         next_row = self.next_available_row()
         start_at = f'A{next_row}'
-        end_at = f'D{next_row}'  # TODO calc letter by the num of criteria in item
+        end_at = f'F{next_row}'  # TODO calc letter by the num of criteria in item
+        helper = f'=JOIN("|", A{next_row},E{next_row})'
+        id = f'=IFNA(INDEX(Name_Index!$A:$A,MATCH(C{next_row}, Name_Index!$B:$B, 0),1), INDEX(Name_Index!$A:$A,MATCH(C{next_row}, Name_Index!${self.supplier_col}:${self.supplier_col}, 0),1))'
         self.worksheet.update(f'{start_at}:{end_at}',
-                              [[item["name"], item["price"], item["volume"], item["available"]]])
+                              [[id, helper, item["name"], item["price"], item["volume"], item["available"]]], raw=False)
         # self.worksheet.update('A83:D83', [['קלואה', '79', '700 מל', 'True']])
 
     def is_worksheet_exist(self, name):
@@ -89,3 +91,6 @@ class SaveToGoogleSheets:
 
     def get_letter_from_num(self, num):
         return chr(ord('a') + num - 1)
+
+    def get_name_index_supplier_col(self, supplier_col):
+        self.supplier_col = supplier_col

@@ -42,6 +42,7 @@ class Blend(BaseSite):
         """Constructor for testSite"""
         super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
         super().create_saver(self.sheet_name)
+        self.saver.get_name_index_supplier_col('H')
 
     def is_product_page(self, soup, name):
         search = self.find_element(soup, self.product_page_check)
@@ -73,7 +74,7 @@ class Blend(BaseSite):
 
     def search_get_price(self, soup, dictionary):
         val = super().search_get_price(soup, dictionary)
-        return val.split()[1].replace(',', '')
+        return val.replace(',', '')
 
     def search_get_available(self, soup, dictionary):
         val = self.find_element(soup, dictionary["available"])
