@@ -5,16 +5,19 @@ import re
 class TheImporter(BaseSite):
     base_url = 'https://www.the-importer.co.il/'
     page = {
-        "name":     {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": "text"},
-        "price":    {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
-                     "element": "TODO", "data": "price"}},
-        "volume":   {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
-                     "element": "TODO", "data": "text"}},
-        "available": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": "exist"}
+        "name": {"element": "div", "attrs_prop": "class", "attrs": "content-title-container", "data": {
+            "element": "h1", "data": "text"}},
+        "price": {"element": "div", "attrs_prop": "id", "attrs": "TotalPrice", "data": {
+            "element": "span", "attrs_prop": "id", "attrs": "lblTotalPriceStr", "data": "price"}},
+        "volume": {"element": "div", "attrs_prop": "id", "attrs": "catalogNumberItemVolumWrapper", "data": {
+            "element": "span", "attrs_prop": "id", "attrs": "lblItemVolumePer100ml", "data": "text"}},
+        "available": {"element": "div", "attrs_prop": "id", "attrs": "addToCartBtn", "data": "exist"}
     }
     search = {
         "name":     {"element": "div", "attrs_prop": "class", "attrs": "list-item-name-wrapper", "data": {
-                     "element": "h2", "data": "text"}},
+                     "element": "h4", "data": "text"}},
+        "name2": {"element": "div", "attrs_prop": "class", "attrs": "list-item-name-wrapper", "data": {
+            "element": "h2", "data": "text"}},
         "price":    {"element": "span", "attrs_prop": "class", "attrs": "item-price-value", "data": "text"},
         "volume":   {"element": "div", "attrs_prop": "class", "attrs": "list-item-name-wrapper", "data": {
                      "element": "a", "data": "element"}},
@@ -53,7 +56,21 @@ class TheImporter(BaseSite):
         par = vol.find_parent("span")
         volume = par.next_sibling.next_sibling.next_sibling.text.split()
         if "ליטר" in volume:
-                return int(volume[0]) * 1000
+                return float(volume[0]) * 1000
         # todo handle litter
+        if not volume:
+            return "Data not found"
         print(volume[0])
         return volume[0]
+
+    def page_get_volume(self, soup, dictionary):
+        val = super().page_get_volume(soup, dictionary)
+        words = val.split()
+        return words[0]
+
+    def search_get_name(self, soup, dictionary):
+        val = super().search_get_name(soup, dictionary)
+        if val == 'Data not found':
+            print("name2")
+            val = self.find_element(soup, dictionary["name2"])
+        return val
