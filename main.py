@@ -36,7 +36,8 @@ to exit         enter exit
             supplier.specific_page(url)
 
 
-def search_my_list_in(supplier):
+def search_my_list_in(supplier_class):
+    supplier = supplier_class()
     print(f'\nmuahahaha lets hack {type(supplier).__name__} site')
     sh = SaveToGoogleSheets()
     sh.set_sheet("מחירון ברבית")
@@ -81,7 +82,15 @@ if __name__ == '__main__':
     # test_supplier(TheImporter)
     # test_supplier(Blend)
     # test_supplier(WineDirect)
-    test_supplier(WNF)
+    # test_supplier(WNF)
+
+    save_sites = (Alcohol123, Drinks4u, Haturki, Paneco)
+    # for site in save_sites:
+    # search_my_list_in(Paneco)
+    # search_my_list_in(Blend)
+    # search_my_list_in(WineDirect)
+    search_my_list_in(TheImporter)
+    search_my_list_in(WNF)
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     # google_sheet = SaveToGoogleSheets()
