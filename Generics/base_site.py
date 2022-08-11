@@ -236,6 +236,14 @@ class BaseSite:
         pass
 
     def name_cleanup(self, name):
+        # if 'מ"ל' in name:
+            # Remove 2 words
+        # if 'ליטר' in name:
+            # Check for num in words[-2]?
+            # remove as necessary
+        # Remove '-'
+        # if 'מארז שי' in name:
+            # Rename to 'מארז שי - {name1}'
         return name
 
     def price_cleanup(self, price):
