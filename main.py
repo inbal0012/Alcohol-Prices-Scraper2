@@ -24,14 +24,14 @@ search_attempt  enter search
 specific_page   enter page
 to exit         enter exit
         """)
-        choise = input("please select: ")
-        if choise in "exit":
+        choice = input("please select: ")
+        if choice in "exit":
             keep_testing = False
-        if choise in "first":
+        if choice in "first":
             supplier.first_attempt()
-        elif choise in "search":
-            supplier.search_attempt("טנקרי")
-        elif choise in "page":
+        elif choice in "search":
+            supplier.search_attempt("אמרטו")
+        elif choice in "page":
             url = input("enter URL: ")
             supplier.specific_page(url)
 
