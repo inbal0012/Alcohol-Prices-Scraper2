@@ -69,3 +69,7 @@ class Haturki(BaseSite):
         val = super().search_get_volume(soup, dictionary)
         val = val.split(',')
         return val[0]
+
+    def volume_cleanup(self, volume):
+        # TODO handle litter
+        return volume

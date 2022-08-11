@@ -74,3 +74,8 @@ class Drinks4u(BaseSite):
         if available:
             availability = False
         return availability
+
+    def name_cleanup(self, name):
+        # TODO remove volume from name OR search name partially in name_index
+        return name
+

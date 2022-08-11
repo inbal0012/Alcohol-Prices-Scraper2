@@ -189,8 +189,7 @@ class BaseSite:
         return self.price_cleanup(res)
 
     def page_get_volume(self, soup, dictionary):
-        res = self.find_element(soup, dictionary["volume"])
-        return self.volume_cleanup(res)
+        return self.find_element(soup, dictionary["volume"])
 
     def page_get_available(self, soup, dictionary):
         return self.find_element(soup, dictionary["available"])
@@ -203,8 +202,7 @@ class BaseSite:
         return self.price_cleanup(res)
 
     def search_get_volume(self, soup, dictionary):
-        res = self.find_element(soup, dictionary["volume"])
-        return self.volume_cleanup(res)
+        return self.find_element(soup, dictionary["volume"])
 
     def search_get_available(self, soup, dictionary):
         return self.find_element(soup, dictionary["available"])
@@ -244,6 +242,12 @@ class BaseSite:
         return price.replace('₪', '')
 
     def volume_cleanup(self, volume):
-        return volume.replace('מ"ל', '').replace('ml', '')
+        remove_words = ['מ"ל', 'ml', 'מ”ל', ' ']
+        if volume == 'Data not found':
+            return volume
+        return_volume = volume
+        for word in remove_words:
+            return_volume = return_volume.replace(word, '')
+        return return_volume
 
 
