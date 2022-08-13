@@ -38,7 +38,7 @@ class Haturki(BaseSite):
         """Constructor for testSite"""
         super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
         super().create_saver(self.sheet_name)
-        self.saver.get_name_index_supplier_col('E')
+        self.saver.get_name_index_supplier_col('F')
 
     def first_attempt(self):
         # url = "https://www.haturki.com/%D7%A7%D7%9C%D7%95%D7%90%D7%94/"

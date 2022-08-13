@@ -43,7 +43,7 @@ class TheImporter(BaseSite):
         """Constructor for testSite"""
         super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
         super().create_saver(self.sheet_name)
-        self.saver.get_name_index_supplier_col('G')
+        self.saver.get_name_index_supplier_col('H')
 
     def is_product_page(self, soup, name):
         meta_keywords = soup.find("meta", id="metaKeywords")["content"]

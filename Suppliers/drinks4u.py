@@ -60,7 +60,7 @@ class Drinks4u(BaseSite):
         """Constructor for testSite"""
         super().__init__(self.base_url, self.page2, self.search2, self.results, self.product_page_check, self.search_string)
         super().create_saver(self.sheet_name)
-        self.saver.get_name_index_supplier_col('D')
+        self.saver.get_name_index_supplier_col('E')
 
     def search_get_volume(self, soup, dictionary):
         return self.get_volume_from_price_per_100ml(soup, dictionary)

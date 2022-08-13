@@ -99,13 +99,6 @@ if __name__ == '__main__':
     # google_sheet.save_item(item)
     # google_sheet.save_items(items)
 
-    # search_my_list_in(importer)
-    # search_my_list_in(alcohol123)
-    # search_my_list_in(drinks4u)
-    # search_my_list_in(haturki)
-    # search_my_list_in(paneco)
-
-
 
 def for_nadav():
     search = []

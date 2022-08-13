@@ -46,7 +46,7 @@ class Paneco(BaseSite):
         """Constructor for testSite"""
         super().__init__(self.base_url, self.page, self.search, self.results, self.product_page_check, self.search_string)
         super().create_saver(self.sheet_name)
-        self.saver.get_name_index_supplier_col('F')
+        self.saver.get_name_index_supplier_col('G')
 
     def search_get_price(self, soup, dictionary):
         val = self.find_element(soup, dictionary["special price"])
