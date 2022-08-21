@@ -29,6 +29,7 @@ class BaseSite:
         self.product_page_check = config_json["product_page_check"]
         self.search_string = config_json["search_string"]
         self.sheet_name = config_json["sheet_name"]
+
     # TODO: remove מ"ל & ₪ sign from all sites. handle litters for all sites
     # Public funcs
     def first_attempt(self):
@@ -115,29 +116,33 @@ class BaseSite:
         return_value = []
         # print(results)
         for result in results:
-            name = self.search_get_name(result, self.search)
-            print("Name: " + name)
-
-            price = self.search_get_price(result, self.search)
-            print("Price: " + price)
-
-            volume = self.search_get_volume(result, self.search)
-            print(f'volume: {volume}')
-
-            available = self.search_get_available(result, self.search)
-            if not available:
-                print("outOfStock")
-
-            print("")
-            return_value.append({
-                "name": name,
-                "price": price,
-                "volume": volume,
-                "available": available
-            })
+            res = self.data_from_result(result)
+            return_value.append(res)
 
         self.save_items(return_value)
         return return_value
+
+    def data_from_result(self, result):
+        name = self.search_get_name(result, self.search)
+        print("Name: " + name)
+
+        price = self.search_get_price(result, self.search)
+        print("Price: " + price)
+
+        volume = self.search_get_volume(result, self.search)
+        print(f'volume: {volume}')
+
+        available = self.search_get_available(result, self.search)
+        if not available:
+            print("outOfStock")
+
+        print("")
+        return {
+            "name": name,
+            "price": price,
+            "volume": volume,
+            "available": available
+        }
 
     def is_product_page(self, soup, name):
         search = self.find_element(soup, self.product_page_check)
@@ -151,6 +156,13 @@ class BaseSite:
             return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
         else:
             return soup.find(dictionary["element"])
+
+    def _find_all(self, soup, dictionary):
+        if "attrs" in dictionary:
+            return soup.find_all(dictionary["element"],
+                                 attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
+        else:
+            return soup.find_all(dictionary["element"])
 
     def find_element(self, soup, data):
         sub_soup = self._find(soup, data)
@@ -169,8 +181,10 @@ class BaseSite:
             return sub_soup.text.strip()
         elif data["data"] == "price":
             return sub_soup.text.split()[0].replace(',', '')
-        elif data["element"]:
+        elif data["data"] == "element":
             return sub_soup
+        elif data["data"] == "find_all":
+            return self._find_all(soup, data)
         elif data["data"] == "search":
             pass
 
@@ -179,6 +193,7 @@ class BaseSite:
             return soup.text.strip()
         else:
             return "Data not found"
+
     # TODO change func names to get_X_from_Y
 
     def page_get_name(self, soup, dictionary):
