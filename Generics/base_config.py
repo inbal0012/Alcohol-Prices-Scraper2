@@ -13,9 +13,11 @@ class BaseConfig:
                      "element": "TODO", "data": "text"}},
         "price":    {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
                      "element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
-                     "element": "TODO", "data": "price"}}},
+                        "element": "TODO", "data": "price"}}},
         "volume":   {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": "text"},
-        "available": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "search_word": "TODO", "data": "exist"}
+        "available": {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "search_word": "TODO", "data": "exist"},
+        "paging":   {"element": "TODO", "attrs_prop": "class", "attrs": "TODO", "data": {
+                     "element": "TODO", "data": "find_all"}},
     }
     results = {
         "element": "TODO",

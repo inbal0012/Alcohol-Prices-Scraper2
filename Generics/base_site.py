@@ -111,7 +111,11 @@ class BaseSite:
         return return_value
 
     def data_from_search_list(self, soup):
-
+        # TODO add page checking (and ABD in movement)
+        pages = self.get_pages(soup, self.search)
+        if pages:
+            # TODO scan all pages
+            print("TODO scan all pages")
         results = self.get_results(soup)
         return_value = []
         # print(results)
@@ -273,4 +277,8 @@ class BaseSite:
             return_volume = return_volume.replace(word, '')
         return return_volume
 
-
+    def get_pages(self, soup, dictionary):
+        if "paging" in dictionary:
+            return self.find_element(soup, dictionary["paging"])
+        else:
+            return []
