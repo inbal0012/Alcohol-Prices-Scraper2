@@ -43,6 +43,8 @@ class WNF(BaseSite):    # Wine & Flavors
 
     def search_get_volume(self, soup, dictionary):
         val = super().search_get_volume(soup, dictionary)
+        if (val == 'Data not found') or (val == ''):
+            return 'Data not found'
         words = val.split()
         volume = words[0].replace("ml", "")
         return volume
