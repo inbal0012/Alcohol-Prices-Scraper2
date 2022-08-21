@@ -44,6 +44,10 @@ class Drinks4u(BaseSite):
         super().create_saver(self.sheet_name)
         self.saver.get_name_index_supplier_col('E')
 
+    def search_get_name(self, soup, dictionary):
+        name = super().search_get_name(soup, dictionary)
+        return self.name_cleanup(name)
+
     def search_get_volume(self, soup, dictionary):
         return self.get_volume_from_price_per_100ml(soup, dictionary)
 
@@ -51,13 +55,14 @@ class Drinks4u(BaseSite):
         return -1
 
     def search_get_available(self, soup, dictionary):
-        available = re.search(self.search["available"]["search_word"], self.search_get_name(soup, dictionary))
+        available = re.search(self.search["available"]["search_word"], super().search_get_name(soup, dictionary))
         availability = True
         if available:
             availability = False
         return availability
 
     def name_cleanup(self, name):
+        name = name.replace("(חסר במלאי)", "")
         # TODO remove volume from name OR search name partially in name_index
-        return name
+        return name.strip()
 
