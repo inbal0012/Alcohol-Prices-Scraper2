@@ -71,7 +71,7 @@ class SaveToGoogleSheets:
         start_at = f'A{next_row}'
         end_at = f'F{next_row}'  # TODO calc letter by the num of criteria in item
         helper = f'=JOIN("|", A{next_row},E{next_row})'
-        id = f'=IFNA(INDEX(Name_Index!$A:$A,MATCH(C{next_row}, Name_Index!$B:$B, 0),1), IFNA(INDEX(Name_Index!$A:$A,MATCH(C{next_row}, Name_Index!$C:$C, 0),1), INDEX(Name_Index!$A:$A,MATCH(C{next_row}, INDEX(Name_Index!$A:$A,MATCH(C{next_row}, Name_Index!${self.supplier_col}:${self.supplier_col}, 0),1)))))'
+        id = f'=IFNA(INDEX(Name_Index!$A:$A,MATCH(C{next_row}, Name_Index!$B:$B, 0),1), IFNA(INDEX(Name_Index!$A:$A,MATCH(C{next_row}, Name_Index!$C:$C, 0),1), INDEX(Name_Index!$A:$A,MATCH(C{next_row}, Name_Index!${self.supplier_col}:${self.supplier_col}, 0),1)))'
         self.worksheet.update(f'{start_at}:{end_at}',
                               [[id, helper, item["name"], item["price"], item["volume"], item["available"]]], raw=False)
         # self.worksheet.update('A83:D83', [['קלואה', '79', '700 מל', 'True']])
