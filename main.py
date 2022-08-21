@@ -30,7 +30,7 @@ to exit         enter exit
         if choice in "first":
             supplier.first_attempt()
         elif choice in "search":
-            supplier.search_attempt("אמרטו")
+            supplier.search_attempt("אראן")
         elif choice in "page":
             url = input("enter URL: ")
             supplier.specific_page(url)
@@ -69,6 +69,8 @@ from Suppliers.blend import Blend
 from Suppliers.terminal3 import Terminal3
 from Suppliers.wine_direct import WineDirect
 from Suppliers.wnf import WNF
+from Suppliers.aquavita import Aquavita
+from Suppliers.mendelson_heshin import MendelsonHeshin
 from Suppliers.test_site import TestSite
 from SaveTo.save_to_google_sheets import SaveToGoogleSheets
 # Press the green button in the gutter to run the script.
@@ -83,14 +85,18 @@ if __name__ == '__main__':
     # test_supplier(Blend)
     # test_supplier(WineDirect)
     # test_supplier(WNF)
+    # test_supplier(Aquavita)
+    test_supplier(MendelsonHeshin)
 
-    save_sites = (Alcohol123, Drinks4u, Haturki, Paneco)
+    save_sites = (Alcohol123, Blend, Drinks4u, Haturki, Paneco, WineDirect, WNF)
     # for site in save_sites:
+    # search_my_list_in(site)
     # search_my_list_in(Paneco)
+    # search_my_list_in(Drinks4u)
     # search_my_list_in(Blend)
     # search_my_list_in(WineDirect)
-    search_my_list_in(TheImporter)
-    search_my_list_in(WNF)
+    # search_my_list_in(TheImporter)
+    # search_my_list_in(WNF)
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     # google_sheet = SaveToGoogleSheets()
