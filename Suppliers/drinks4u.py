@@ -62,6 +62,7 @@ class Drinks4u(BaseSite):
         return availability
 
     def name_cleanup(self, name):
+        name = super().name_cleanup(name)
         name = name.replace("(חסר במלאי)", "")
         # TODO remove volume from name OR search name partially in name_index
         return name.strip()

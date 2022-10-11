@@ -17,7 +17,6 @@ def test_supplier(supplierClass):
     while keep_testing:
         print(f'\n\ntesting {type(supplier).__name__}')
         print("what do you want to do?")
-        print("first_attempt enter f")
         print("""
 first_attempt   enter first
 search_attempt  enter search
@@ -30,7 +29,7 @@ to exit         enter exit
         if choice in "first":
             supplier.first_attempt()
         elif choice in "search":
-            supplier.search_attempt("אראן")
+            supplier.search_attempt("דיסארונו אמרטו")
         elif choice in "page":
             url = input("enter URL: ")
             supplier.specific_page(url)
@@ -42,7 +41,7 @@ def search_my_list_in(supplier_class):
     sh = SaveToGoogleSheets()
     sh.set_sheet("מחירון ברבית")
     sh.set_worksheet("אלכוהול לחיפוש")
-    alcohol_array = sh.worksheet.col_values(1)
+    alcohol_array = sh.worksheet.col_values(2)
     print(alcohol_array)
 
     # run_on(supplier, alcohol_array[79])
@@ -55,9 +54,12 @@ def search_my_list_in(supplier_class):
 
 
 def run_on(supplier, name):
-    print(name)
-    supplier.search_attempt(name)
-    time.sleep(3)
+    try:
+        print(name)
+        supplier.search_attempt(name)
+        time.sleep(3)
+    except Exception as e:
+        print(f'error occurred during scanning {type(supplier).__name__}. {str(e)}')
 
 
 from Suppliers.the_importer import TheImporter
@@ -88,15 +90,16 @@ if __name__ == '__main__':
     # test_supplier(Aquavita)
     test_supplier(MendelsonHeshin)
 
-    save_sites = (Alcohol123, Blend, Drinks4u, Haturki, Paneco, WineDirect, WNF)
-    # for site in save_sites:
-    # search_my_list_in(site)
+    save_sites = (Alcohol123, Aquavita, Blend, Drinks4u, Haturki, MendelsonHeshin, Paneco, Terminal3, WineDirect, WNF)
+    test = [MendelsonHeshin]
+    for site in save_sites:
+        search_my_list_in(site)
     # search_my_list_in(Paneco)
     # search_my_list_in(Drinks4u)
     # search_my_list_in(Blend)
     # search_my_list_in(WineDirect)
-    # search_my_list_in(TheImporter)
-    # search_my_list_in(WNF)
+    # search_my_list_in(Aquavita)
+    # search_my_list_in(MendelsonHeshin)
 
     # item = {'name': 'קלואה', 'price': '80', 'volume': '700 מ"ל', 'available': True}
     # google_sheet = SaveToGoogleSheets()

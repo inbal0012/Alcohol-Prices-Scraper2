@@ -29,11 +29,11 @@ class Blend(BaseSite):
             {"element": "div", "attrs_prop": "class", "attrs": "product-tile", "data": "element"}
     }
     product_page_check = {
-        "element": "div",
+        "element": "li",
         "attrs_prop": "class",
-        "attrs": "container search-results",
+        "attrs": "breadcrumb-item",
         "search_word": "TODO",
-        "data": "not-exist"
+        "data": "exist"
     }
     search_string = "search?q="
     sheet_name = "Alcohol Prices"
@@ -45,9 +45,9 @@ class Blend(BaseSite):
         self.saver.get_name_index_supplier_col('I')
 
     def is_product_page(self, soup, name):
-        search = self.find_element(soup, self.product_page_check)
+        prod_page = self.find_element(soup, self.product_page_check)
 
-        if search is None:
+        if prod_page:
             print("product page")
             return True
 

@@ -93,19 +93,6 @@ class Aquavita(BaseSite):
         return val
 
     def search_get_volume(self, soup, dictionary):
-        val = self.parse_volume_from_name(soup)
-        if 'ליטר' in val:
-            # TODO better parse litters שוופס טוניק for example
-            val = '1000'
-        return val
-
-    def parse_volume_from_name(self, soup):
         name = self.search_get_name(soup, self.search)
-        # TODO מארז
-        if 'מ”ל' in name:
-            name = name.split()
-            return f'{name[-2]}'
-            # print('וודקה פינלנדיה – 700 מ”ל')
-        elif 'ליטר' in name:
-            return '1000'
-        return "N/A"
+        val = self.get_volume_from_name(name)
+        return val

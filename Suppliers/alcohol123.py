@@ -110,17 +110,68 @@ class Alcohol123(BaseSite):
         return value
 
     def page_get_volume(self, soup, dictionary):
-        bottle_volume = soup.find(string="נפח בקבוק").find_parent("div", class_=re.compile("elementor-column"))
-        volume = bottle_volume.next_sibling.next_sibling
+        volume = self.get_volume_from_table(soup, dictionary)
+        if volume != "Data not found":
+            return volume
+
+        details = soup.find("div", class_=re.compile("elementor-widget-woocommerce-product-title"))
+        if details == "Data not found":
+            return "Data not found"
+
+        volume = details.next_sibling.next_sibling
         val = self.get_text_safe(volume)
         if val == "Data not found" or val == "":
             return "Data not found"
+
+        if 'ל 100 מ”ל' in val:
+            volume = self.get_volume_from_price_per_100ml(soup, dictionary)
+            return volume
+
+        return volume.text.split()[0].replace(',', '')
+
+    def get_volume_from_table(self, soup, dictionary):
+        bottle_volume = soup.find(string="נפח בקבוק")
+        if bottle_volume == "Data not found" or bottle_volume is None:
+            return "Data not found"
+
+        bottle_volume = bottle_volume.find_parent("div", class_=re.compile("elementor-column"))
+        volume = bottle_volume.next_sibling.next_sibling
+
+        val = self.get_text_safe(volume)
+        if val == "Data not found" or val == "":
+            return "Data not found"
+
+        return volume.text.split()[0].replace(',', '')
+
+    def get_price_per_100ml_str(self, soup, dictionary):
+        price_per_100 =soup.find('100 מ')
+        if price_per_100 == "Data not found" or price_per_100 is None:
+            return "Data not found"
+
+        price_per_100 = price_per_100.find_parent("div")
+        print(price_per_100)
+        details = soup.find("div", class_=re.compile("elementor-widget-woocommerce-product-title"))
+        if details == "Data not found":
+            return "Data not found"
+
+        volume = details.next_sibling.next_sibling
+        val = self.get_text_safe(volume)
+        if val == "Data not found" or val == "":
+            return "Data not found"
+
+        if 'ל 100 מ”ל' in val:
+            print(volume.text.split())
+            return volume.text.strip()
         else:
-            return volume.text.split()[0].replace(',', '')
+            return "Data not found"
+
+    def price_per_100ml_location(self):
+        return -2
 
     def page_select_sub_soup(self, soup):
-        details = soup.find(string="פרטי מוצר").find_parent("section", class_=re.compile("elementor-section"))
-        return details.find_parent("div", re.compile("elementor-widget-wrap"))
+        # details = soup.find(string="פרטי מוצר").find_parent("section", class_=re.compile("elementor-section"))
+        title = soup.find("h1", class_=re.compile("product_title "))
+        return title.find_parent("section", re.compile("elementor-top-section"))
 
     def search_get_volume(self, soup, dictionary):
         val = super().search_get_volume(soup, dictionary)
@@ -128,6 +179,7 @@ class Alcohol123(BaseSite):
             print(f'123 search_get_price {val}')
             val = self.parse_volume_from_name(soup)
             # do it differently
+        val = super().volume_cleanup(val)
         if 'ליטר' in val:
             # TODO better parse litters שוופס טוניק for example
             val = '1000'
@@ -143,9 +195,3 @@ class Alcohol123(BaseSite):
         elif 'ליטר' in name:
             return '1000'
         return "N/A"
-
-    def name_cleanup(self, name):
-        # TODO remove volume from name OR search name partially in name_index
-        # TODO remove כשר
-        # TODO remove (חסר במלאי)
-        return name

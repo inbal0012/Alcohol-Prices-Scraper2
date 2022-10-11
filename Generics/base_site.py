@@ -7,6 +7,9 @@ import urllib.parse
 
 class BaseSite:
     """some documentation"""
+    volume_in_name_threshold = 5
+    data_not_found_str = "Data not found"
+    ml_variations = ['מ"ל', 'מ”ל', 'מ״ל', 'מל', 'ml']
 
     def __init__(self, base_url, page, search, results, product_page_check, search_string):
         """Constructor for BaseSite"""
@@ -101,6 +104,9 @@ class BaseSite:
         if not available:
             print("outOfStock")
 
+        if volume == 50 and 'מיני' not in name:
+            name = f'{name} מיני'
+
         return_value = {
             "name": name,
             "price": price,
@@ -128,10 +134,11 @@ class BaseSite:
 
     def data_from_result(self, result):
         name = self.search_get_name(result, self.search)
-        print("Name: " + name)
+        print(f'Name: {name}')
+        name = self.name_cleanup(name)
 
         price = self.search_get_price(result, self.search)
-        print("Price: " + price)
+        print(f'Price: {price}')
 
         volume = self.search_get_volume(result, self.search)
         print(f'volume: {volume}')
@@ -155,6 +162,10 @@ class BaseSite:
             print("product page")
             return True
 
+    def get_results(self, soup):
+        return soup.find_all(self.results["element"],
+                             attrs={self.results["attrs_prop"]: re.compile(self.results["attrs"])})
+
     def _find(self, soup, dictionary):
         if "attrs" in dictionary:
             return soup.find(dictionary["element"], attrs={dictionary["attrs_prop"]: re.compile(dictionary["attrs"])})
@@ -177,7 +188,7 @@ class BaseSite:
             return sub_soup is None
         elif sub_soup is None:
             # Data does not exists raise exception
-            return "Data not found"
+            return self.data_not_found_str
         elif not isinstance(data["data"], str):
             # Go deeper into the element
             return self.find_element(sub_soup, data["data"])
@@ -192,14 +203,19 @@ class BaseSite:
         elif data["data"] == "search":
             pass
 
+    def is_not_found_or_none(self, data):
+        val = data == self.data_not_found_str or data is None
+        return val
+
     def get_text_safe(self, soup):
         if soup is not None:
             return soup.text.strip()
         else:
-            return "Data not found"
+            return self.data_not_found_str
 
     # TODO change func names to get_X_from_Y
 
+    # region page funcs
     def page_get_name(self, soup, dictionary):
         return self.find_element(soup, dictionary["name"])
 
@@ -208,11 +224,15 @@ class BaseSite:
         return self.price_cleanup(res)
 
     def page_get_volume(self, soup, dictionary):
-        return self.find_element(soup, dictionary["volume"])
+        res = self.find_element(soup, dictionary["volume"])
+        return self.volume_cleanup(res)
 
     def page_get_available(self, soup, dictionary):
         return self.find_element(soup, dictionary["available"])
 
+    # endregion
+
+    # region search funcs
     def search_get_name(self, soup, dictionary):
         return self.find_element(soup, dictionary["name"])
 
@@ -221,14 +241,13 @@ class BaseSite:
         return self.price_cleanup(res)
 
     def search_get_volume(self, soup, dictionary):
-        return self.find_element(soup, dictionary["volume"])
+        res = self.find_element(soup, dictionary["volume"])
+        return self.volume_cleanup(res)
 
     def search_get_available(self, soup, dictionary):
         return self.find_element(soup, dictionary["available"])
 
-    def get_results(self, soup):
-        return soup.find_all(self.results["element"],
-                             attrs={self.results["attrs_prop"]: re.compile(self.results["attrs"])})
+    # endregion
 
     def is_saver_defined(self):
         return self.saver is not None
@@ -239,46 +258,198 @@ class BaseSite:
     def build_search_url(self, name):
         return self.base_url + self.search_string + name
 
+    # region volume
     def get_volume_from_price_per_100ml(self, soup, dictionary):
         price = self.search_get_price(soup, dictionary)
 
-        price_per_100_str = self.find_element(soup, dictionary["volume_per_100"])
+        price_per_100_str = self.get_price_per_100ml_str(soup, dictionary)
+        if self.is_not_found_or_none(price_per_100_str):
+            return self.data_not_found_str
+
+        if '100 מ"ל' not in price_per_100_str:
+            return self.data_not_found_str
+
         words = price_per_100_str.split()
 
         volume_per_100 = words[self.price_per_100ml_location()]
-        volume = "NA"
-        if re.match(r'^-?\d+(?:\.\d+)$', volume_per_100) is not None:
+        volume = self.data_not_found_str
+        if re.match(r'([0-9]*[.]*[0-9]+)', volume_per_100) is not None:
             volume = round(float(price) / float(volume_per_100) * 100)
         return volume
+
+    def get_volume_from_name(self, name):
+        # pattern = re.compile('(?<!\/)([0-9]*[.]*[0-9]+)\s*מ"ל(?![\/A-z])')
+        # volume = re.search(pattern, name)
+        # if volume is not None:
+        volume = self.get_ml_from_str(name)
+        if not self.is_not_found_or_none(volume):
+            print(f'vol from name = {volume}')
+            return self.volume_cleanup(volume)
+
+        volume = self.get_volume_from_litter(name)
+        if not self.is_not_found_or_none(volume):
+            print(f'vol from name = {volume}')
+            return volume
+        return self.data_not_found_str
+
+    def get_price_per_100ml_str(self, soup, dictionary):
+        return self.find_element(soup, dictionary["volume_per_100"])
 
     def price_per_100ml_location(self):
         pass
 
+    def get_ml_from_str(self, name):
+        words = self.ml_variations
+        for word in words:
+            pattern = re.compile(f'(?<!\/)([0-9]*[.]*[0-9]+)\s*{word}(?![\/A-z])')
+            volume = re.search(pattern, name)
+            if volume is not None:
+                return f'{volume.group(1)} {word}'
+
+            pattern = re.compile(f'(?<!\/)([0-9]*[.]*[0-9]+)\s* {word}(?![\/A-z])')
+            volume = re.search(pattern, name)
+            if volume is not None:
+                return f'{volume.group(1)} {word}'
+        return self.data_not_found_str
+
+    def get_volume_from_litter(self, name):
+        volume = self.get_litter_from_str(name)
+        if self.is_not_found_or_none(volume):
+            return self.data_not_found_str
+
+        pattern = re.compile(f'(?<!\/)([0-9]*[.]*[0-9]+)\s*ליטר(?![\/A-z])')
+        number = re.search(pattern, name)
+        if number:
+            if self.isfloat(number.group(1)):
+                number = float(number.group(1))
+                if number < self.volume_in_name_threshold:
+                    return number * 1000
+        if "חצי" in name:
+            return self.parse_half_litter(name)
+        return 1000
+
+    # endregion
+
+    # region cleanup
     def name_cleanup(self, name):
-        # if 'מ"ל' in name:
-            # Remove 2 words
-        # if 'ליטר' in name:
-            # Check for num in words[-2]?
-            # remove as necessary
+        # TODO remove volume from name OR search name partially in name_index
+        # TODO remove כשר
+        # TODO remove (חסר במלאי)
+
         # Remove '-'
+        name = self.remove_hyphen_from_name(name)
+        # if 'מ"ל' in name:
+        # Remove 2 words
+        name = self.remove_ml_from_name(name)
+        name = self.remove_litter_from_name(name)
+        # if 'ליטר' in name:
+        # handle חצי ליטר
+        # handle english 1L / 3L etc
+        # Check for num in words[-2]?
+        # remove as necessary
         # if 'מארז שי' in name:
-            # Rename to 'מארז שי - {name1}'
-        return name
+        # Rename to 'מארז שי - {name1}'
+        return re.sub(' +', ' ', name)
 
     def price_cleanup(self, price):
         return price.replace('₪', '')
 
     def volume_cleanup(self, volume):
-        remove_words = ['מ"ל', 'ml', 'מ”ל', ' ']
+        remove_words = self.ml_variations
         if volume == 'Data not found':
             return volume
         return_volume = volume
         for word in remove_words:
             return_volume = return_volume.replace(word, '')
-        return return_volume
+        return return_volume.strip()
+    # endregion
 
     def get_pages(self, soup, dictionary):
         if "paging" in dictionary:
-            return self.find_element(soup, dictionary["paging"])
+            res = self.find_element(soup, dictionary["paging"])
+            if res == 'Data not found':
+                return []
+            return res
         else:
             return []
+
+    def get_litter_from_str(self, name):
+        if 'ליטר' in name:
+            pattern = re.compile(f'(?<!\/)([0-9]*[.]*[0-9]+)\s*ליטר(?![\/A-z])')
+            number = re.search(pattern, name)
+            if number:
+                if self.isfloat(number.group(1)):
+                    number = float(number.group(1))
+                    if number < self.volume_in_name_threshold:
+                        return f'{number} ליטר'
+            if "חצי" in name:
+                return self.parse_half_litter(name)
+            return 1000
+        else:
+            return self.data_not_found_str
+
+    def parse_half_litter(self, name):
+        return 500
+
+    def remove_hyphen_from_name(self, name):
+        name = name.replace("–", "-")
+        name = name.replace(" - ", " ")
+        name = name.replace(" -", " ")
+        name = name.replace("- ", " ")
+        name = name.replace("-", " ")
+        name = name.replace("|", " ")
+        name = name.replace("*", " ")
+        name = name.replace(",", " ")
+        return name
+
+    def remove_ml_from_name(self, name):
+        volume = self.get_ml_from_str(name)
+        if not self.is_not_found_or_none(volume):
+            if ' 50' in volume:
+                name = name.replace(f'{volume}', " מיני")
+            else:
+                name = name.replace(f'{volume}', "")
+        return name.strip()
+
+    def remove_litter_from_name(self, name):
+        if 'ליטר' in name:
+            pattern = re.compile(f'(?<!\/)([0-9]*[.]*[0-9]+)\s*ליטר(?![\/A-z])')
+            number = re.search(pattern, name)
+            if number:
+                if self.isfloat(number.group(1)):
+                    fnumber = float(number.group(1))
+                    if fnumber < self.volume_in_name_threshold:
+                        name = self.remove_litter_with_number(name, number.group(0))
+            elif "חצי" in name:
+                name = self.remove_litter_and_half(name)
+            else:
+                name = self.remove_litter_no_additions(name)
+
+        pattern = re.compile(f'(?<!\/)([0-9]*[.]*[0-9]+)\s*L(?![\/A-z])')
+        number = re.search(pattern, name)
+        if number:
+            name = self.remove_litter_with_number(name, number.group(0))
+
+        return name
+
+    def isfloat(self, num):
+        try:
+            float(num)
+            return True
+        except ValueError:
+            return False
+
+    def remove_litter_with_number(self, name, number):
+        val = name.replace(number, "")
+        print(f"remove_litter_with_number {val}")
+        return val.strip()
+
+    def remove_litter_and_half(self, name):
+        print("remove_litter_and_half")
+        return name
+
+    def remove_litter_no_additions(self, name):
+        print("remove_litter_no_additions")
+        name = name.replace("ליטר", "").strip()
+        return re.sub(' +', ' ', name)
+

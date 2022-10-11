@@ -17,6 +17,7 @@ class WineDirect(BaseSite):
         "price":    {"element": "span", "attrs_prop": "class", "attrs": "woocommerce-Price-amount amount", "data": {
                      "element": "bdi", "data": "price"}},
         "volume_per_100":   {"element": "div", "attrs_prop": "class", "attrs": "jet-listing-dynamic-field__content", "data": "text"},
+        "volume":   {"element": "div", "attrs_prop": "class", "attrs": "jet-listing-dynamic-field__content", "data": "text"},
         "available": {"element": "div", "attrs_prop": "class", "attrs": "jet-woo-builder-archive-product-stock-status", "search_word": "TODO", "data": {"element": "p", "attrs_prop": "class", "attrs": "out-of-stock", "data": "not_exist"}}
     }
     results = {
@@ -42,7 +43,31 @@ class WineDirect(BaseSite):
         return self.base_url + "?s=" + name + self.search_string
 
     def search_get_volume(self, soup, dictionary):
-        return self.get_volume_from_price_per_100ml(soup, dictionary)
+        volume = self.get_volume_from_price_per_100ml(soup, dictionary)
+        if not self.is_not_found_or_none(volume):
+            return volume
+
+        stock_status = soup.find("div", class_=re.compile("elementor-widget-jet-woo-builder-archive-stock-status"))
+        if not self.is_not_found_or_none(stock_status):
+            stock_status = stock_status.previous_sibling.previous_sibling
+            if not self.is_not_found_or_none(stock_status):
+                volume = self.find_element(stock_status, dictionary["volume"])
+                if not self.is_not_found_or_none(volume):
+                    return self.volume_cleanup(volume)
+
+        name = self.search_get_name(soup, dictionary)
+        volume = self.get_volume_from_name(name)
+        if not self.is_not_found_or_none(volume):
+            return volume
+
+        return self.data_not_found_str
+
+    def get_price_per_100ml_str(self, soup, dictionary):
+        stock_status = soup.find("div", class_=re.compile("elementor-widget-jet-woo-builder-archive-stock-status"))
+        if not self.is_not_found_or_none(stock_status):
+            stock_status = stock_status.previous_sibling.previous_sibling
+            if not self.is_not_found_or_none(stock_status):
+                return self.find_element(stock_status, dictionary["volume_per_100"])
 
     def price_per_100ml_location(self):
         return 0
@@ -51,7 +76,16 @@ class WineDirect(BaseSite):
         bottle_volume = soup.find(string="נפח").find_parent("th")
         volume = bottle_volume.next_sibling.next_sibling
         val = self.get_text_safe(volume)
-        if val == "Data not found" or val == "":
-            return "Data not found"
+        if self.is_not_found_or_none(val):
+            return self.data_not_found_str
         else:
-            return volume.text.split()[0].replace(',', '')
+            val = self.get_ml_from_str(val)
+            if not self.is_not_found_or_none(val):
+                return val
+
+            val = self.get_text_safe(volume)
+            val = self.get_volume_from_litter(val)
+            if not self.is_not_found_or_none(val):
+                return val
+
+            return self.data_not_found_str

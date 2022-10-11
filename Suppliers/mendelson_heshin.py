@@ -51,7 +51,7 @@ class MendelsonHeshin(BaseSite):
                          self.search_string)
         # super().from_config(self.con_j)
         super().create_saver(self.sheet_name)
-        self.saver.get_name_index_supplier_col('L')
+        self.saver.get_name_index_supplier_col('M')
 
     def build_search_url(self, name):
         value = self.base_url + "/?s=" + name + self.search_string
@@ -68,6 +68,11 @@ class MendelsonHeshin(BaseSite):
         if val == 'Data not found':
             return super().search_get_price(soup, dictionary)
         return val
+
+    def search_get_volume(self, soup, dictionary):
+        name = self.search_get_name(soup, dictionary)
+        vol = self.get_volume_from_name(name)
+        return vol
 
     def page_get_price(self, soup, dictionary):
         val = self.find_element(soup, dictionary["special price"])
